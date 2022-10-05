@@ -1,4 +1,7 @@
-const URL = "http://srvprobepr01.gentgrp.gent.be";
+const URL_GENT = "http://srvprobepr01.gentgrp.gent.be/sparql";
+const URL_LBLOD = "https://centrale-vindplaats.lblod.info/sparql";
+const URL_LBLOD_QA = "https://qa.centrale-vindplaats.lblod.info/sparql";
+const URL = URL_LBLOD_QA;
 
 const REGLEMENTEN = `
 PREFIX eli: <http://data.europa.eu/eli/ontology#>
@@ -31,7 +34,7 @@ class Besluiten extends HTMLElement {
   }
 
   async getReglementen() {
-    const endpoint = URL + "/sparql?query=" + encodeURIComponent(REGLEMENTEN);
+    const endpoint = URL + "?query=" + encodeURIComponent(REGLEMENTEN);
     const response = await fetch(endpoint,  
       { headers: { 
           'Content-Type' : 'application/x-www-form-urlencoded',
