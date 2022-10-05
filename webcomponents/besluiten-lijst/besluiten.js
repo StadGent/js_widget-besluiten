@@ -122,4 +122,4 @@ class Besluiten extends HTMLElement {
   }
 }
 
-customElements.define('besluiten-widget', Besluiten);
+customElements.define('besluiten-lijst', Besluiten);
