@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Besluiten - detail</title>
+  <script src='besluiten.js'></script>
+  <link media="all" rel="stylesheet" href="https://stijlgids.stad.gent/v5/css/main.css">
+  <link media="all" rel="stylesheet" href="https://stijlgids.stad.gent/v5/css/styleguide.css">
+</head>
+<body>
+  <h1>Besluiten detail</h1>
+
+  <besluiten-detail endpoint="http://srvprobepr01.gentgrp.gent.be/sparql">
+    <p slot="list_title">Besluit (probe)</p>
+  </besluiten-detail>
+
+  <besluiten-detail endpoint="https://centrale-vindplaats.lblod.info/sparql">
+    <p slot="list_title">Besluit (centrale-vindplaats)</p>
+  </besluiten-detail>
+
+  <besluiten-detail endpoint="https://qa.centrale-vindplaats.lblod.info/sparql">
+    <p slot="list_title">Besluit (centrale-vindplaats QA)</p>
+  </besluiten-detail>
+
+</body>
+
+</html>
