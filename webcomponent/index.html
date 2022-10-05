@@ -12,7 +12,64 @@
   <body>
       <h1>De 5 meest recente besluiten</h1>
 
-      <!--
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Besluiten</title>
+  <script src='besluiten.js'></script>
+</head>
+
+<template id="besluiten-template">
+  <besluiten-list class="besluiten-list">
+    <h2 class="besluiten-list__title">
+      <slot name="list_title">Widget Title</slot>
+    </h2>
+    <ul class="besluiten-list__items">
+    </ul>
+    <!--ul class="besluiten-list__items">
+          <li class="besluiten-list__item besluiten-list__item--{{ status }}>">
+              <h3 class="besluiten-list__item-title">
+                  <a href="{{ item_link }}" class="besluiten-list__item-link">
+                      <slot name="item_title"></slot>
+                  </a>
+              </h3>
+              <p class="besluiten-list__item-content">
+                <slot name="gemeenteraad"></slot>
+                <slot name="time"></slot>
+              </p>
+              <span class="besluiten-list__item-status">
+                <slot name="status"></slot>
+              </span>
+          </li>
+      </ul>
+      <a href="{{ item_link }}" class="besluiten-list__cta"-->
+  </besluiten-list>
+</template>
+
+<template id="besluit-element">
+  <li>
+    <h3><slot name="item_title"></slot></h3>
+    <p>Goedkeuring: <slot name="item_time"></slot></p>
+  </li>
+  <!--li class="besluiten-list__item besluiten-list__item--{{ status }}>">
+    <h3 class="besluiten-list__item-title">
+      <a href="{{ item_link }}" class="besluiten-list__item-link">
+        <slot name="item_title"></slot>
+      </a>
+    </h3>
+    <p class="besluiten-list__item-content">
+      <slot name="gemeenteraad"></slot>
+      <slot name="time"></slot>
+    </p>
+    <span class="besluiten-list__item-status">
+      <slot name="status"></slot>
+    </span>
+  </li-->
+</template>
+
+<body>
+  <!--
       @todo: turn this into a template with slots.
       @see: https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_templates_and_slots
       <template id="besluiten-lijst">
@@ -37,6 +94,7 @@
       </template>
       -->
 
-      <besluiten-widget></besluiten-widget>
-  </body>
+  <besluiten-widget><p slot="list_title">Recente reglementen</p></besluiten-widget>
+</body>
+
 </html>
