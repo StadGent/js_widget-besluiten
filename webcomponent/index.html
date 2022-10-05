@@ -85,8 +85,16 @@
       </template>
       -->
 
-  <besluiten-widget>
-    <p slot="list_title">Recente reglementen</p>
+  <besluiten-widget endpoint="http://srvprobepr01.gentgrp.gent.be/sparql">
+    <p slot="list_title">Recente reglementen (probe)</p>
+  </besluiten-widget>
+
+  <besluiten-widget endpoint="https://centrale-vindplaats.lblod.info/sparql">
+    <p slot="list_title">Recente reglementen (centrale-vindplaats)</p>
+  </besluiten-widget>
+
+  <besluiten-widget endpoint="https://qa.centrale-vindplaats.lblod.info/sparql">
+    <p slot="list_title">Recente reglementen (centrale-vindplaats QA)</p>
   </besluiten-widget>
 
 </body>

@@ -1,8 +1,3 @@
-const URL_GENT = "http://srvprobepr01.gentgrp.gent.be/sparql";
-const URL_LBLOD = "https://centrale-vindplaats.lblod.info/sparql";
-const URL_LBLOD_QA = "https://qa.centrale-vindplaats.lblod.info/sparql";
-const SPARQL_ENDPOINT = URL_LBLOD_QA;
-
 const BESTUURSEENHEID_URI = "";
 const BESTUURSORGANEN_URIS = "";
 const REGLEMENT_TYPES = "";
@@ -13,7 +8,6 @@ class Besluiten extends HTMLElement {
 
   constructor() {
     super();
-
   }
 
   connectedCallback() {
@@ -62,7 +56,7 @@ class Besluiten extends HTMLElement {
   }
 
   async getReglementen() {
-    const endpoint = SPARQL_ENDPOINT + "?query=" + encodeURIComponent(this.constructQuery());
+    const endpoint = this.getAttribute('endpoint') + "?query=" + encodeURIComponent(this.constructQuery());
     const response = await fetch(endpoint,
       {
         headers: {
