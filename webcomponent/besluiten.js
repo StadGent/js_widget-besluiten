@@ -1,13 +1,49 @@
 const BESTUURSEENHEID_URI = "";
 const BESTUURSORGANEN_URIS = "";
 const REGLEMENT_TYPES = "";
-const TITLE = "De meest recente reglementen";
+const TITLE = "";
 const BUTTON_URL = "";
+
+const TEMPLATE_LIST = `
+  <template id="besluiten-lijst">
+    <h2 class="besluiten-list__title"><slot name="list_title">Lijst van besluiten</slot></h2>
+
+    <ul class="besluiten-list__items">
+    </ul>
+
+    <a href="{{ item_link }}" class="besluiten-list__cta"></a>
+  </template>`;
+
+const TEMPLATE_DETAIL = `
+  <template id="besluit-detail">
+    <li class="besluiten-list__item besluiten-list__item--{{ status }}">
+      <h3 class="besluiten-list__item-title">
+        <a href="{{ item_link }}" class="besluiten-list__item-link">
+          <slot name="item_title">Besluit</slot>
+        </a>
+      </h3>
+      <p>Goedkeuring: <slot name="item_time"></slot></p>
+      <!--
+      <p class="besluiten-list__item-content">
+        {{ gemeenteraad }}
+        {{ time }}
+      </p>
+      <span class="besluiten-list__item-status">{{ status }}</span>
+      -->
+    </li>
+  </template>`;
 
 class Besluiten extends HTMLElement {
 
   constructor() {
     super();
+
+    if (!document.getElementById("besluiten-lijst")) {
+      document.body.innerHTML += TEMPLATE_LIST;
+    }
+    if (!document.getElementById("besluit-detail")) {
+      document.body.innerHTML += TEMPLATE_DETAIL;
+    }
   }
 
   connectedCallback() {
@@ -15,7 +51,7 @@ class Besluiten extends HTMLElement {
   }
 
   renderResults(reglementen) {
-    const template = document.getElementById("besluiten-template").content;
+    const template = document.getElementById("besluiten-lijst").content;
     const shadowRoot = this.attachShadow({ mode: "open" });
     shadowRoot.appendChild(template.cloneNode(true));
 
@@ -33,8 +69,8 @@ class Besluiten extends HTMLElement {
 
     // create an element template for each query result element
     reglementen.forEach(reglement => {
-      const elementTemplate = document.getElementById("besluit-element").content;
-      shadowRoot.appendChild(elementTemplate.cloneNode(true));
+      const elementTemplate = document.getElementById("besluit-detail").content;
+      shadowRoot.querySelectorAll(".besluiten-list__items")[0].appendChild(elementTemplate.cloneNode(true));
 
       // set child slots
       let slots = this.shadowRoot.querySelectorAll('slot');
@@ -77,7 +113,6 @@ class Besluiten extends HTMLElement {
   constructQuery() {
     return `PREFIX eli: <http://data.europa.eu/eli/ontology#>
     PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
-    
     
     SELECT ?besluit ?title ?date WHERE {
       ?besluit a besluit:Besluit ;
