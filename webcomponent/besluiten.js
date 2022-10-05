@@ -53,4 +53,4 @@ class Besluiten extends HTMLElement {
 
 }
 
-customElements.define( 'besluiten-list', Besluiten )
+customElements.define( 'besluiten-widget', Besluiten )
