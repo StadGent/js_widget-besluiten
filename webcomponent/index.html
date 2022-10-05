@@ -9,6 +9,32 @@
   </head>
   <body>
       <h1>De 5 meest recente besluiten</h1>
-      <besluiten-list></besluiten-list>
+
+      <!--
+      @todo: turn this into a template with slots.
+      @see: https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_templates_and_slots
+      <besluiten-list class="besluiten-list">
+          <h2 class="besluiten-list__title">{{ list_title }}</h2>
+          <ul class="besluiten-list__items">
+              <li class="besluiten-list__item besluiten-list__item--{{ status }}">
+                  <h3 class="besluiten-list__item-title">
+                      <a href="{{ item_link }}" class="besluiten-list__item-link">
+                          {{ item_title }}
+                      </a>
+                  </h3>
+                  <p class="besluiten-list__item-content">
+                      {{ gemeenteraad }}
+                      {{ time }}
+                  </p>
+                  <span class="besluiten-list__item-status">
+    				{{ status }}
+                  </span>
+              </li>
+          </ul>
+          <a href="{{ item_link }}" class="besluiten-list__cta">
+      </besluiten-list>
+      -->
+
+      <besluiten-widget></besluiten-widget>
   </body>
 </html>
