@@ -33,7 +33,7 @@ const TEMPLATE_DETAIL = `
     </li>
   </template>`;
 
-class Besluiten extends HTMLElement {
+class BesluitenLijst extends HTMLElement {
 
   constructor() {
     super();
@@ -122,4 +122,4 @@ class Besluiten extends HTMLElement {
   }
 }
 
-customElements.define('besluiten-lijst', Besluiten);
+customElements.define('besluiten-lijst', BesluitenLijst);

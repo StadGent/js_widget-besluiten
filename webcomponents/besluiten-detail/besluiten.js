@@ -1,46 +1,23 @@
-const BESTUURSEENHEID_URI = "";
-const BESTUURSORGANEN_URIS = "";
-const REGLEMENT_TYPES = "";
-const TITLE = "";
-const BUTTON_URL = "";
-
-const TEMPLATE_LIST = `
-  <template id="besluiten-lijst">
-    <h2 class="besluiten-list__title"><slot name="list_title">Lijst van besluiten</slot></h2>
-
-    <ul class="besluiten-list__items">
-    </ul>
-
-    <a href="{{ item_link }}" class="besluiten-list__cta"></a>
-  </template>`;
-
-const TEMPLATE_DETAIL = `
+const TEMPLATE = `
   <template id="besluit-detail">
-    <li class="besluiten-list__item besluiten-list__item--{{ status }}">
+    <li class="besluiten-list__item besluiten-list__item--${besluit_status}">
       <h3 class="besluiten-list__item-title">
-        <a href="{{ item_link }}" class="besluiten-list__item-link">
-          <slot name="item_title">Besluit</slot>
-        </a>
+        <a href="{{ item_link }}" class="besluiten-list__item-link">${titel}</a>
       </h3>
-      <p>Goedkeuring: <slot name="item_time"></slot></p>
-      <!--
+      <p>Goedkeuring: </p>
       <p class="besluiten-list__item-content">
-        {{ gemeenteraad }}
-        {{ time }}
+        ${orgaan}
+        ${datum}
       </p>
-      <span class="besluiten-list__item-status">{{ status }}</span>
-      -->
+      <span class="besluiten-list__item-status">${besluit_status}</span>
     </li>
   </template>`;
 
-class Besluiten extends HTMLElement {
+class BesluitenDetail extends HTMLElement {
 
   constructor() {
     super();
 
-    if (!document.getElementById("besluiten-lijst")) {
-      document.body.innerHTML += TEMPLATE_LIST;
-    }
     if (!document.getElementById("besluit-detail")) {
       document.body.innerHTML += TEMPLATE_DETAIL;
     }
@@ -122,4 +99,4 @@ class Besluiten extends HTMLElement {
   }
 }
 
-customElements.define('besluiten-detail', Besluiten);
+customElements.define('besluiten-detail', BesluitenDetail);
