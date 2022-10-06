@@ -5,19 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
   <title>Besluiten - detail</title>
-  <script src='besluiten.js'></script>
+  <script type="module" src='main.js'></script>
   <link media="all" rel="stylesheet" href="https://stijlgids.stad.gent/v5/css/main.css">
   <link media="all" rel="stylesheet" href="https://stijlgids.stad.gent/v5/css/styleguide.css">
 </head>
 <body>
   <h1>Besluiten detail</h1>
 
-  <besluiten-detail uri="https://data.gent.be/id/besluiten/22.0823.8239.1746">
-    <p slot="list_title">Besluit (probe)</p>
+  <besluiten-detail
+    uri="https://data.gent.be/id/besluiten/22.0823.8239.1746"
+    titel="titel"
+    orgaan="orgaan"
+    datum="datum"
+    url="url"
+    status="status"
+  >
   </besluiten-detail>
 
   <besluiten-detail uri="http://data.lblod.info/id/a73c9a80-8411-11ec-b716-15eb1e955784">
-    <p slot="list_title">Besluit (lblod)</p>
   </besluiten-detail>
 
 </body>
