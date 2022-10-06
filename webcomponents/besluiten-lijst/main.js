@@ -111,14 +111,22 @@ class BesluitenLijst extends HTMLElement {
   }
 
   constructQuery() {
-    return `PREFIX eli: <http://data.europa.eu/eli/ontology#>
+    const amount = this.getAttribute('aantal');
+    return `
+    PREFIX dct: <http://purl.org/dc/terms/>
+    PREFIX prov: <http://www.w3.org/ns/prov#>
+    PREFIX eli: <http://data.europa.eu/eli/ontology#>
     PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
     
-    SELECT ?besluit ?title ?date WHERE {
+    SELECT ?besluit ?title ?date ?agendapunt ?zitting WHERE {
       ?besluit a besluit:Besluit ;
-        eli:date_publication ?date ;
-        eli:title_short ?title .
-    } ORDER BY DESC(?date) LIMIT 5`
+      eli:date_publication ?date ;
+      eli:title_short ?title ;
+      prov:wasGeneratedBy/dct:subject ?agendapunt ;
+      ?o ?p .
+    
+      ?zitting besluit:behandelt ?agendapunt .
+    } ORDER BY DESC(?date) LIMIT ${amount}`
   }
 
 }
