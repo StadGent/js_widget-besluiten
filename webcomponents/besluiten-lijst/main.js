@@ -83,7 +83,7 @@ class BesluitenLijst extends HTMLElement {
           case "item_time":
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
             let date = new Date(reglement.date.value);
-            slot.outerHTML = date.toLocaleDateString('be-NL', options);
+            slot.outerHTML = date.toLocaleDateString('nl-be', options);
             break;
         }
       });
@@ -120,6 +120,7 @@ class BesluitenLijst extends HTMLElement {
         eli:title_short ?title .
     } ORDER BY DESC(?date) LIMIT 5`
   }
+
 }
 
 customElements.define('besluiten-lijst', BesluitenLijst);
