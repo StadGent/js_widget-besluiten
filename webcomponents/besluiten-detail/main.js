@@ -33,14 +33,11 @@ class BesluitenDetail extends HTMLElement {
   }
 
   renderResults(besluit) {
-    console.log(besluit);
     this.titel = besluit.title.value;
     this.orgaan = '@todo';
     this.datum = this.getAttribute('datum');
-    var zitting = besluit.zitting.value;
-    zitting = zitting.substr(zitting.length - 17);
-    var agendapunt = besluit.agendapunt.value;
-    agendapunt = agendapunt.substr(agendapunt.length - 17);
+    var zitting = /[^/]*$/.exec(besluit.zitting.value)[0];
+    var agendapunt = /[^/]*$/.exec(besluit.agendapunt.value)[0];
     this.url = `https://ebesluitvorming.gent.be/zittingen/${zitting}/agendapunten/${agendapunt}`;
     this.status = '@todo';
     this.innerHTML += this.createDetail();
