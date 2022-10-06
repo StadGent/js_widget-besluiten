@@ -35,7 +35,10 @@ class BesluitenDetail extends HTMLElement {
   renderResults(besluit) {
     this.titel = besluit.title.value;
     this.orgaan = '@todo';
-    this.datum = this.getAttribute('datum');
+
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
+    let date = new Date(besluit.date.value);
+    this.datum = date.toLocaleDateString('nl-be', options);
     var zitting = /[^/]*$/.exec(besluit.zitting.value)[0];
     var agendapunt = /[^/]*$/.exec(besluit.agendapunt.value)[0];
     this.url = `https://ebesluitvorming.gent.be/zittingen/${zitting}/agendapunten/${agendapunt}`;

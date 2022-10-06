@@ -50,6 +50,18 @@ class BesluitenLijst extends HTMLElement {
     const reglementen = this.getReglementen();
   }
 
+  createDetail() {
+    return (`
+      <besluiten-detail
+        titel="${titel}"
+        orgaan="${orgaan}"
+        datum="${datum}"
+        url="${url}"
+        status="${status}"
+      >
+    `);
+  }
+
   renderResults(reglementen) {
     const template = document.getElementById("besluiten-lijst").content;
     const shadowRoot = this.attachShadow({ mode: "open" });
