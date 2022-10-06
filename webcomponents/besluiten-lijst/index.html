@@ -5,24 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
   <title>Besluiten - lijst</title>
-  <script type="module" src='main.js'></script>
-  <script type="module" src='../besluiten-detail/main.js'></script>
+  <script src='main.js'></script>
+  <script src='../besluiten-detail/main.js'></script>
   <link media="all" rel="stylesheet" href="https://stijlgids.stad.gent/v5/css/main.css">
   <link media="all" rel="stylesheet" href="https://stijlgids.stad.gent/v5/css/styleguide.css">
 </head>
 <body>
   <h1>Besluiten lijst</h1>
 
-  <besluiten-lijst endpoint="http://srvprobepr01.gentgrp.gent.be/sparql" aantal="5">
-    <p slot="list_title">Recente reglementen (probe)</p>
+  <besluiten-lijst
+    endpoint="http://srvprobepr01.gentgrp.gent.be/sparql"
+    aantal="3"
+  >
+    <p slot="title">5 meest recente reglementen (probe)</p>
   </besluiten-lijst>
 
-  <besluiten-lijst endpoint="https://centrale-vindplaats.lblod.info/sparql" aantal="1">
-    <p slot="list_title">Recente reglementen (lblod)</p>
+  <besluiten-lijst
+    endpoint="https://centrale-vindplaats.lblod.info/sparql"
+    aantal="1"
+  >
+    <p slot="title">Meest recente reglement (lblod)</p>
+    <a slot="link" href="https://centrale-vindplaats.lblod.info/">Alle besluiten op centrale vindplaats</a>
   </besluiten-lijst>
 
-  <besluiten-lijst endpoint="https://qa.centrale-vindplaats.lblod.info/sparql" aantal="1">
-    <p slot="list_title">Meest recente reglement (lblod QA)</p>
+  <besluiten-lijst
+    endpoint="https://qa.centrale-vindplaats.lblod.info/sparql"
+    aantal="1"
+  >
+    <p slot="title">Meest recente reglement (lblod QA)</p>
+    <a slot="link" href="https://qa.centrale-vindplaats.lblod.info/">Alle besluiten op centrale vindplaats (qa)</a>
   </besluiten-lijst>
 
 </body>

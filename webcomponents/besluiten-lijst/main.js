@@ -4,103 +4,49 @@ const REGLEMENT_TYPES = "";
 const TITLE = "";
 const BUTTON_URL = "";
 
-const TEMPLATE_LIST = `
-  <template id="besluiten-lijst">
-    <h2 class="besluiten-list__title"><slot name="list_title">Lijst van besluiten</slot></h2>
-
-    <ul class="besluiten-list__items">
-    </ul>
-
-    <a href="{{ item_link }}" class="besluiten-list__cta"></a>
-  </template>`;
-
-const TEMPLATE_DETAIL = `
-  <template id="besluit-detail">
-    <li class="besluiten-list__item besluiten-list__item--{{ status }}">
-      <h3 class="besluiten-list__item-title">
-        <a href="{{ item_link }}" class="besluiten-list__item-link">
-          <slot name="item_title">Besluit</slot>
-        </a>
-      </h3>
-      <p>Goedkeuring: <slot name="item_time"></slot></p>
-      <!--
-      <p class="besluiten-list__item-content">
-        {{ gemeenteraad }}
-        {{ time }}
-      </p>
-      <span class="besluiten-list__item-status">{{ status }}</span>
-      -->
-    </li>
-  </template>`;
-
 class BesluitenLijst extends HTMLElement {
 
   constructor() {
     super();
-
-    if (!document.getElementById("besluiten-lijst")) {
-      document.body.innerHTML += TEMPLATE_LIST;
-    }
-    if (!document.getElementById("besluit-detail")) {
-      document.body.innerHTML += TEMPLATE_DETAIL;
-    }
   }
 
   connectedCallback() {
-    const reglementen = this.getReglementen();
+    this.getReglementen();
   }
 
-  createDetail() {
+  getUrl(besluit) {
+    var zitting = /[^/]*$/.exec(besluit.zitting.value)[0];
+    var agendapunt = /[^/]*$/.exec(besluit.agendapunt.value)[0];
+    return `https://ebesluitvorming.gent.be/zittingen/${zitting}/agendapunten/${agendapunt}`;
+  }
+
+  createDetail(besluit) {
+    var url = this.getUrl(besluit);
     return (`
-      <besluiten-detail
-        titel="${titel}"
-        orgaan="${orgaan}"
-        datum="${datum}"
-        url="${url}"
-        status="${status}"
-      >
+      <li>
+        <besluiten-detail
+          titel="${besluit.title.value}"
+          orgaan="@todo"
+          datum="${besluit.date.value}"
+          url="${url}"
+          status="@todo"
+        >
+      </li>
     `);
   }
 
-  renderResults(reglementen) {
-    const template = document.getElementById("besluiten-lijst").content;
-    const shadowRoot = this.attachShadow({ mode: "open" });
-    shadowRoot.appendChild(template.cloneNode(true));
+  renderResults(besluiten) {
+    const template = this.getTemplate();
+    //this.appendChild(template.cloneNode(true));
+    const shadowRoot =this.attachShadow({mode: 'open'}).appendChild(
+      template.cloneNode(true)
+    );
 
-    // set parent slots
-    if (TITLE.length > 0) {
-      let slots = this.shadowRoot.querySelectorAll('slot');
-      slots.forEach(slot => {
-        switch (slot.name) {
-          case "list_title":
-            slot.outerHTML = TITLE;
-            break;
-        }
-      });
-    }
-
-    // create an element template for each query result element
-    reglementen.forEach(reglement => {
-      const elementTemplate = document.getElementById("besluit-detail").content;
-      shadowRoot.querySelectorAll(".besluiten-list__items")[0].appendChild(elementTemplate.cloneNode(true));
-
-      // set child slots
-      let slots = this.shadowRoot.querySelectorAll('slot');
-      slots.forEach(slot => {
-        console.log(slot);
-        switch (slot.name) {
-          case "item_title":
-            slot.outerHTML = reglement.title.value;
-            break;
-          case "item_time":
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
-            let date = new Date(reglement.date.value);
-            slot.outerHTML = date.toLocaleDateString('nl-be', options);
-            break;
-        }
-      });
+    var list = "";
+    besluiten.forEach(besluit => {
+      list += this.createDetail(besluit)
     });
-
+    this.shadowRoot.querySelectorAll(".besluiten-list__items")[0].innerHTML = list;
   }
 
   async getReglementen() {
@@ -115,7 +61,7 @@ class BesluitenLijst extends HTMLElement {
 
     if (response.ok) {
       const json = await response.json();
-      console.log(JSON.stringify(json.results.bindings));
+      //console.log(JSON.stringify(json.results.bindings));
       this.renderResults(json.results.bindings);
     } else {
       console.log("Error when getting data.");
@@ -134,13 +80,30 @@ class BesluitenLijst extends HTMLElement {
       ?besluit a besluit:Besluit ;
       eli:date_publication ?date ;
       eli:title_short ?title ;
-      prov:wasGeneratedBy/dct:subject ?agendapunt ;
-      ?o ?p .
+      prov:wasGeneratedBy/dct:subject ?agendapunt .
     
       ?zitting besluit:behandelt ?agendapunt .
     } ORDER BY DESC(?date) LIMIT ${amount}`
   }
 
+  getTemplate() {
+    const template = `
+      <template id="template-besluiten-lijst">
+        <h2 class="besluiten-list__title"><slot name="title">Recente besluiten</slot></h2>
+    
+        <ul class="besluiten-list__items">
+        </ul>
+    
+        <slot name="link"><a href="https://ebesluitvorming.gent.be/">Alle besluiten van Stad Gent</a></slot>
+      </template>
+    `;
+
+    if (!document.getElementById("template-besluiten-lijst")) {
+      document.body.innerHTML += template;
+    }
+
+    return document.getElementById("template-besluiten-lijst").content;
+  }
 }
 
 customElements.define('besluiten-lijst', BesluitenLijst);

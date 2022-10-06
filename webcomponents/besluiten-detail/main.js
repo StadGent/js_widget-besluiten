@@ -10,7 +10,7 @@ class BesluitenDetail extends HTMLElement {
     } else {
       this.titel = this.getAttribute('titel');
       this.orgaan = this.getAttribute('orgaan');
-      this.datum = this.getAttribute('datum');
+      this.datum = this.formatDate(this.getAttribute('datum'));
       this.url = this.getAttribute('url');
       this.status = this.getAttribute('status');
       this.innerHTML += this.createDetail();
@@ -19,31 +19,38 @@ class BesluitenDetail extends HTMLElement {
 
   createDetail() {
     return (`
-        <div class="besluiten-list__item besluiten-list__item--${this.status}">
-          <h3 class="besluiten-list__item-title">
-            <a href="${this.url}" class="besluiten-list__item-link">${this.titel}</a>
-          </h3>
-          <p class="besluiten-list__item-content">
-            <span>Orgaan: ${this.orgaan}</span>
-            <span>Goedkeuring: ${this.datum}</span>
-          </p>
-          <span class="besluiten-list__item-status">${this.status}</span>
-        </div>
+      <div class="besluiten-list__item besluiten-list__item--${this.status}">
+        <h3 class="besluiten-list__item-title">
+          <a href="${this.url}" class="besluiten-list__item-link">${this.titel}</a>
+        </h3>
+        <p class="besluiten-list__item-content">
+          <span>Orgaan: ${this.orgaan}</span>
+          <span>Goedkeuring: ${this.datum}</span>
+        </p>
+        <span class="besluiten-list__item-status">Status: ${this.status}</span>
+      </div>
     `);
+  }
+
+  getUrl(besluit) {
+    var zitting = /[^/]*$/.exec(besluit.zitting.value)[0];
+    var agendapunt = /[^/]*$/.exec(besluit.agendapunt.value)[0];
+    return `https://ebesluitvorming.gent.be/zittingen/${zitting}/agendapunten/${agendapunt}`;
   }
 
   renderResults(besluit) {
     this.titel = besluit.title.value;
     this.orgaan = '@todo';
-
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
-    let date = new Date(besluit.date.value);
-    this.datum = date.toLocaleDateString('nl-be', options);
-    var zitting = /[^/]*$/.exec(besluit.zitting.value)[0];
-    var agendapunt = /[^/]*$/.exec(besluit.agendapunt.value)[0];
-    this.url = `https://ebesluitvorming.gent.be/zittingen/${zitting}/agendapunten/${agendapunt}`;
+    this.datum = this.formatDate(besluit.date.value)
+    this.url = this.getUrl(besluit);
     this.status = '@todo';
     this.innerHTML += this.createDetail();
+  }
+
+  formatDate(date) {
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
+    date = new Date(date);
+    return date.toLocaleDateString('nl-be', options);
   }
 
   async getBesluit(uri) {
