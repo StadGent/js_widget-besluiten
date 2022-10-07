@@ -11,7 +11,7 @@ class ReglementenLijst extends HTMLElement {
   }
 
   connectedCallback() {
-    this.getBesluiten();
+    this.getReglementen();
   }
 
   getUrl(reglement) {
@@ -49,7 +49,7 @@ class ReglementenLijst extends HTMLElement {
     this.shadowRoot.querySelectorAll(".reglementen-list__items")[0].innerHTML = list;
   }
 
-  async getBesluiten() {
+  async getReglementen() {
     const endpoint = this.getAttribute('endpoint') + "?query=" + encodeURIComponent(this.constructQuery());
     const response = await fetch(endpoint,
       {
