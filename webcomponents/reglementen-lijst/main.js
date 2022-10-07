@@ -4,7 +4,7 @@ const REGLEMENT_TYPES = "";
 const TITLE = "";
 const BUTTON_URL = "";
 
-class BesluitenLijst extends HTMLElement {
+class ReglementenLijst extends HTMLElement {
 
   constructor() {
     super();
@@ -14,20 +14,20 @@ class BesluitenLijst extends HTMLElement {
     this.getBesluiten();
   }
 
-  getUrl(besluit) {
-    var zitting = /[^/]*$/.exec(besluit.zitting.value)[0];
-    var agendapunt = /[^/]*$/.exec(besluit.agendapunt.value)[0];
+  getUrl(reglement) {
+    var zitting = /[^/]*$/.exec(reglement.zitting.value)[0];
+    var agendapunt = /[^/]*$/.exec(reglement.agendapunt.value)[0];
     return `https://ebesluitvorming.gent.be/zittingen/${zitting}/agendapunten/${agendapunt}`;
   }
 
-  createDetail(besluit) {
-    var url = this.getUrl(besluit);
+  createDetail(reglement) {
+    var url = this.getUrl(reglement);
     return (`
       <li>
-        <besluiten-detail
-          titel="${besluit.title.value}"
-          orgaan="${besluit.orgaan.value}"
-          datum="${besluit.date.value}"
+        <reglementen-detail
+          titel="${reglement.title.value}"
+          orgaan="${reglement.orgaan.value}"
+          datum="${reglement.date.value}"
           url="${url}"
           status="@todo"
         >
@@ -35,7 +35,7 @@ class BesluitenLijst extends HTMLElement {
     `);
   }
 
-  renderResults(besluiten) {
+  renderResults(reglementen) {
     const template = this.getTemplate();
     //this.appendChild(template.cloneNode(true));
     const shadowRoot =this.attachShadow({mode: 'open'}).appendChild(
@@ -43,10 +43,10 @@ class BesluitenLijst extends HTMLElement {
     );
 
     var list = "";
-    besluiten.forEach(besluit => {
-      list += this.createDetail(besluit)
+    reglementen.forEach(reglement => {
+      list += this.createDetail(reglement)
     });
-    this.shadowRoot.querySelectorAll(".besluiten-list__items")[0].innerHTML = list;
+    this.shadowRoot.querySelectorAll(".reglementen-list__items")[0].innerHTML = list;
   }
 
   async getBesluiten() {
@@ -104,9 +104,10 @@ class BesluitenLijst extends HTMLElement {
       
       SELECT ?besluit ?title ?date ?agendapunt ?zitting ?orgaan WHERE {
         ?besluit a besluit:Besluit ;
+          a <https://data.vlaanderen.be/id/concept/BesluitType/67378dd0-5413-474b-8996-d992ef81637a> ;
           eli:date_publication ?date ;
           eli:title_short ?title ;
-        ${queryBestuursorgaan}
+          ${queryBestuursorgaan}
         ?bestuursorgaanURI skos:prefLabel ?orgaan . 
         ${filterparams}
       } ORDER BY DESC(?date) LIMIT ${amount}`;
@@ -114,22 +115,22 @@ class BesluitenLijst extends HTMLElement {
 
   getTemplate() {
     const template = `
-      <template id="template-besluiten-lijst">
-        <h2 class="besluiten-list__title"><slot name="title">Recente besluiten</slot></h2>
+      <template id="template-reglementen-lijst">
+        <h2 class="reglementen-list__title"><slot name="title">Recente reglementen</slot></h2>
     
-        <ul class="besluiten-list__items">
+        <ul class="reglementen-list__items">
         </ul>
     
-        <slot name="link"><a href="https://ebesluitvorming.gent.be/">Alle besluiten van Stad Gent</a></slot>
+        <slot name="link"><a href="https://ebesluitvorming.gent.be/">Alle reglementen van Stad Gent</a></slot>
       </template>
     `;
 
-    if (!document.getElementById("template-besluiten-lijst")) {
+    if (!document.getElementById("template-reglementen-lijst")) {
       document.body.innerHTML += template;
     }
 
-    return document.getElementById("template-besluiten-lijst").content;
+    return document.getElementById("template-reglementen-lijst").content;
   }
 }
 
-customElements.define('besluiten-lijst', BesluitenLijst);
+customElements.define('reglementen-lijst', ReglementenLijst);

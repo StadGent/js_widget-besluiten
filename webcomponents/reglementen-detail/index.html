@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Reglementen - detail</title>
+  <script type="module" src='main.js'></script>
+  <link media="all" rel="stylesheet" href="https://stijlgids.stad.gent/v5/css/main.css">
+  <link media="all" rel="stylesheet" href="https://stijlgids.stad.gent/v5/css/styleguide.css">
+</head>
+<body>
+  <h1>Besluiten detail</h1>
+
+  <reglement-detail
+    titel="Voorbeeld reglement (manueel)"
+    orgaan="Gemeenteraad"
+    datum="2022-10-06"
+    url="https://ebesluitvorming.gent.be/zittingen/22.0117.2331.2297/agendapunten/22.0823.8239.1746"
+    status="Goedgekeurd"
+  >
+  </reglement-detail>
+
+  <reglement-detail
+    endpoint="http://srvprobepr01.gentgrp.gent.be/sparql"
+    uri="https://data.gent.be/id/besluiten/22.0823.8239.1746"
+  >
+  </reglement-detail>
+
+  <reglement-detail
+    endpoint="https://qa.centrale-vindplaats.lblod.info/sparql"
+    uri="http://data.lblod.info/id/a73c9a80-8411-11ec-b716-15eb1e955784"
+  >
+  </reglement-detail>
+
+</body>
+
+</html>

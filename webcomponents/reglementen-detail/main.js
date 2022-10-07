@@ -1,4 +1,4 @@
-class BesluitenDetail extends HTMLElement {
+class ReglementenDetail extends HTMLElement {
 
   constructor() {
     super();
@@ -6,7 +6,7 @@ class BesluitenDetail extends HTMLElement {
 
   connectedCallback() {
     if (this.getAttribute('uri')) {
-      this.getBesluit(this.getAttribute('uri'));
+      this.getReglement(this.getAttribute('uri'));
     } else {
       this.titel = this.getAttribute('titel');
       this.orgaan = this.getAttribute('orgaan');
@@ -32,17 +32,17 @@ class BesluitenDetail extends HTMLElement {
     `);
   }
 
-  getUrl(besluit) {
-    var zitting = /[^/]*$/.exec(besluit.zitting.value)[0];
-    var agendapunt = /[^/]*$/.exec(besluit.agendapunt.value)[0];
+  getUrl(reglement) {
+    var zitting = /[^/]*$/.exec(reglement.zitting.value)[0];
+    var agendapunt = /[^/]*$/.exec(reglement.agendapunt.value)[0];
     return `https://ebesluitvorming.gent.be/zittingen/${zitting}/agendapunten/${agendapunt}`;
   }
 
-  renderResults(besluit) {
-    this.titel = besluit.title.value;
+  renderResults(reglement) {
+    this.titel = reglement.title.value;
     this.orgaan = '@todo';
-    this.datum = this.formatDate(besluit.date.value)
-    this.url = this.getUrl(besluit);
+    this.datum = this.formatDate(reglement.date.value)
+    this.url = this.getUrl(reglement);
     this.status = '@todo';
     this.innerHTML += this.createDetail();
   }
@@ -53,7 +53,7 @@ class BesluitenDetail extends HTMLElement {
     return date.toLocaleDateString('nl-be', options);
   }
 
-  async getBesluit(uri) {
+  async getReglement(uri) {
     const query = this.constructQuery(uri);
     const endpoint = this.getAttribute('endpoint') + "?query=" + encodeURIComponent(query);
     const response = await fetch(endpoint,
@@ -96,4 +96,4 @@ class BesluitenDetail extends HTMLElement {
 
 }
 
-customElements.define('besluiten-detail', BesluitenDetail);
+customElements.define('reglementen-detail', ReglementenDetail);

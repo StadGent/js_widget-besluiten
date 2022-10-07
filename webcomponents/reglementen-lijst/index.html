@@ -4,45 +4,37 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <title>Besluiten - lijst</title>
+  <title>Reglementen - lijst</title>
   <script src='main.js'></script>
-  <script src='../besluiten-detail/main.js'></script>
+  <script src='../reglementen-detail/main.js'></script>
   <link media="all" rel="stylesheet" href="https://stijlgids.stad.gent/v5/css/main.css">
   <link media="all" rel="stylesheet" href="https://stijlgids.stad.gent/v5/css/styleguide.css">
 </head>
 <body>
-  <h1>Besluiten lijst</h1>
+  <h1>Reglementen lijst</h1>
 
-  <besluiten-lijst
+  <reglementen-lijst
     endpoint="http://srvprobepr01.gentgrp.gent.be/sparql"
     aantal="5"
   >
-    <p slot="title">5 meest recente besluiten (probe)</p>
-  </besluiten-lijst>
+    <p slot="title">5 meest recente reglementen (probe)</p>
+  </reglementen-lijst>
 
-  <besluiten-lijst
+  <reglementen-lijst
     endpoint="http://srvprobepr01.gentgrp.gent.be/sparql"
     aantal="3"
     bestuursorganen="http://data.lblod.info/id/bestuursorganen/c126b20bc1a94de293b7fceaf998c82e9a7a1d56ba34cbf9992aa4bf01ae2b01 http://data.lblod.info/id/bestuursorganen/6efc9b0c3ebb3371031d45e517d88f66eb115adf28e5e1827684522f56a8aa2c"
 >
-    <p slot="title">3 meest recente besluiten gemeenteraad en burgemeester (probe)</p>
-  </besluiten-lijst>
+    <p slot="title">3 meest recente reglementen gemeenteraad en burgemeester (probe)</p>
+  </reglementen-lijst>
 
-  <besluiten-lijst
-    endpoint="https://centrale-vindplaats.lblod.info/sparql"
-    aantal="3"
-  >
-    <p slot="title">Meest recente besluit (lblod)</p>
-    <a slot="link" href="https://centrale-vindplaats.lblod.info/">Alle besluiten op centrale vindplaats</a>
-  </besluiten-lijst>
-
-  <besluiten-lijst
+  <reglementen-lijst
     endpoint="https://qa.centrale-vindplaats.lblod.info/sparql"
-    aantal="3"
+    aantal="1"
   >
-    <p slot="title">Meest recente besluit (lblod QA)</p>
+    <p slot="title">Meest recente reglement (lblod QA)</p>
     <a slot="link" href="https://qa.centrale-vindplaats.lblod.info/">Alle besluiten op centrale vindplaats (qa)</a>
-  </besluiten-lijst>
+  </reglementen-lijst>
 
 </body>
 
