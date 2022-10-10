@@ -50,7 +50,7 @@ class BesluitenLijst extends HTMLElement {
   }
 
   async getBesluiten() {
-    const endpoint = this.getAttribute('endpoint') + "?query=" + encodeURIComponent(this.constructQuery());
+    const endpoint = this.getAttribute('sparql-endpoint') + "?query=" + encodeURIComponent(this.constructQuery());
     const response = await fetch(endpoint,
       {
         headers: {
@@ -85,7 +85,7 @@ class BesluitenLijst extends HTMLElement {
         besluit:isGehoudenDoor/mandaat:isTijdspecialisatieVan ?bestuursorgaanURI .`;
 
     // TODO: remove with query below after Bestuursorgaan has been moved to Zitting iso BehandelingVanAgendapunt
-    const endpoint = this.getAttribute('endpoint')
+    const endpoint = this.getAttribute('sparql-endpoint')
     if (endpoint.includes("probe")) {
       queryBestuursorgaan = `
         prov:wasGeneratedBy ?behandelingVanAgendapunt .

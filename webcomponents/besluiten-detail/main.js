@@ -55,7 +55,7 @@ class BesluitenDetail extends HTMLElement {
 
   async getBesluit(uri) {
     const query = this.constructQuery(uri);
-    const endpoint = this.getAttribute('endpoint') + "?query=" + encodeURIComponent(query);
+    const endpoint = this.getAttribute('sparql-endpoint') + "?query=" + encodeURIComponent(query);
     const response = await fetch(endpoint,
         {
           headers: {
