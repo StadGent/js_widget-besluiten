@@ -1,9 +1,3 @@
-const BESTUURSEENHEID_URI = "";
-const BESTUURSORGANEN_URIS = "";
-const REGLEMENT_TYPES = "";
-const TITLE = "";
-const BUTTON_URL = "";
-
 class ReglementenLijst extends HTMLElement {
 
   constructor() {
