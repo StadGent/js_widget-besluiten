@@ -12,23 +12,23 @@ class ReglementenDetail extends HTMLElement {
       this.orgaan = this.getAttribute('orgaan');
       this.datum = this.formatDate(this.getAttribute('datum'));
       this.url = this.getAttribute('url');
-      this.status = this.getAttribute('status');
+      this.type = this.getAttribute('type');
       this.innerHTML += this.createDetail();
     }
   }
 
   createDetail() {
     return (`
-      <div class="besluiten-list__item besluiten-list__item--${this.status}">
-        <h3 class="besluiten-list__item-title">
-          <a href="${this.url}" class="besluiten-list__item-link">${this.titel}</a>
-        </h3>
-        <p class="besluiten-list__item-content">
-          <span>${this.orgaan}</span>
-          <span>Datum van bekendmaking: ${this.datum}</span>
-        </p>
-        <span class="besluiten-list__item-status">Status: ${this.status}</span>
-      </div>
+      <h3>
+        <a href="${this.url}">${this.titel}</a>
+        <a href="${this.url}">${this.titel}</a>
+      </h3>
+      <p>
+        <span class="orgaan">Orgaan: <span class="value">${this.orgaan}</span></span>
+        <span class="separator">|</span>
+        <span class="datum">Datum van bekendmaking: <span class="value">${this.datum}</span></span>
+        <span class="type">${this.type} type</span>
+      </p>
     `);
   }
 
@@ -43,13 +43,13 @@ class ReglementenDetail extends HTMLElement {
     this.orgaan = '@todo';
     this.datum = this.formatDate(reglement.date.value)
     this.url = this.getUrl(reglement);
-    this.status = '@todo';
+    this.type = '@todo';
     this.innerHTML += this.createDetail();
   }
 
   formatDate(date) {
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
     date = new Date(date);
+    const options = { weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit' }
     return date.toLocaleDateString('nl-be', options);
   }
 

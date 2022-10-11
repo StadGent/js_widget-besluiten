@@ -19,16 +19,15 @@ class BesluitenDetail extends HTMLElement {
 
   createDetail() {
     return (`
-      <div class="besluiten-list__item besluiten-list__item--${this.status}">
-        <h3 class="besluiten-list__item-title">
-          <a href="${this.url}" class="besluiten-list__item-link">${this.titel}</a>
-        </h3>
-        <p class="besluiten-list__item-content">
-          <span>${this.orgaan}</span>
-          <span>Datum van de zitting: ${this.datum}</span>
-        </p>
-        <span class="besluiten-list__item-status">Status: ${this.status}</span>
-      </div>
+      <h3>
+        <a href="${this.url}">${this.titel}</a>
+      </h3>
+      <p>
+        <span class="orgaan">Orgaan: <span class="value">${this.orgaan}</span></span>
+        <span class="separator">|</span>
+        <span class="datum">Datum van de zitting: <span class="value">${this.datum}</span></span>
+        <span class="status">${this.status} status</span>
+      </p>
     `);
   }
 
@@ -48,9 +47,19 @@ class BesluitenDetail extends HTMLElement {
   }
 
   formatDate(date) {
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
     date = new Date(date);
-    return date.toLocaleDateString('nl-be', options);
+    let d = date.toLocaleDateString('nl-be', {
+      weekday: 'short',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
+    let t = date.toLocaleTimeString('nl-be', {
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric'
+    });
+    return `${d} om ${t}`;
   }
 
   async getBesluit(uri) {
