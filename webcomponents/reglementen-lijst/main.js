@@ -116,6 +116,9 @@ class ReglementenLijst extends HTMLElement {
           h2 {
             font: 600 26px Fira Sans,sans-serif;
           }
+          .highlight--top .highlight__inner {
+            padding-right: 2rem!important;
+          }
         </style>
     
         <div class="cs--cyan">

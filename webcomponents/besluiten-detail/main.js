@@ -24,19 +24,29 @@ class BesluitenDetail extends HTMLElement {
         @import url("https://fonts.googleapis.com/css?family=Fira+Sans:400,600,700");
         @import url("https://stijlgids.stad.gent/v5/css/styleguide.css");
         @import url("https://stijlgids.stad.gent/v5/css/main.css");
+        besluiten-detail dd, besluiten-detail dt {
+          display: inline;
+          padding-left: 0;
+        }
+        besluiten-detail dl>dd:not(:last-of-type):after {
+          display: inline-block;
+          padding: 0 0.2em;
+          content: "\\007C";
+        }
       </style>
       <div class="card">
         <div>
           <h3>
             <a href="${this.url}">${this.titel}</a>
           </h3>
-          <div>
-            <span class="orgaan">Orgaan: <span class="value">${this.orgaan}</span></span>
-            <span class="separator">|</span>
-            <span class="datum">Datum van de zitting: <span class="value">${this.datum}</span></span>
-            <span class="status">${this.status} status</span>
-          </div>
-          </div>
+          <dl>
+            <dt>Orgaan:</dt>
+            <dd>${this.orgaan}</dd>
+            <dt>Datum van de zitting:</dt>
+            <dd>${this.datum}</dd>
+          </dl>
+          <span class="status" style="display: none">${this.status} status</span>
+        </div>
       </div>
     `);
   }

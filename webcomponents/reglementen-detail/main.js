@@ -24,18 +24,28 @@ class ReglementenDetail extends HTMLElement {
         @import url("https://fonts.googleapis.com/css?family=Fira+Sans:400,600,700");
         @import url("https://stijlgids.stad.gent/v5/css/styleguide.css");
         @import url("https://stijlgids.stad.gent/v5/css/main.css");
+        reglementen-detail dd, reglementen-detail dt {
+          display: inline;
+          padding-left: 0;
+        }
+        reglementen-detail dl>dd:not(:last-of-type):after {
+          display: inline-block;
+          padding: 0 0.2em;
+          content: "\\007C";
+        }
       </style>
       <div class="card">
         <div>
           <h3>
             <a href="${this.url}">${this.titel}</a>
           </h3>
-          <div>
-            <span class="orgaan">Orgaan: <span class="value">${this.orgaan}</span></span>
-            <span class="separator">|</span>
-            <span class="datum">Datum van bekendmaking: <span class="value">${this.datum}</span></span>
-            <span class="type">${this.type} type</span>
-          </div>
+          <dl>
+            <dt>Orgaan:</dt>
+            <dd>${this.orgaan}</dd>
+            <dt>Datum van bekendmaking:</dt>
+            <dd>${this.datum}</dd>
+          </dl>
+          <span class="type" style="display: none">${this.type} type</span>
         </div>
       </div>
     `);
