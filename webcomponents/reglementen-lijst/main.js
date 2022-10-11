@@ -21,7 +21,7 @@ class ReglementenLijst extends HTMLElement {
         <reglementen-detail
           titel="${reglement.title.value}"
           orgaan="${reglement.orgaan.value}"
-          datum="${reglement.date.value}"
+          datum="${reglement.publicatie_datum.value}"
           url="${url}"
           status="@todo"
         >
@@ -96,15 +96,15 @@ class ReglementenLijst extends HTMLElement {
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
       PREFIX mandaat: <http://data.vlaanderen.be/ns/mandaat#>
       
-      SELECT ?besluit ?title ?date ?agendapunt ?zitting ?orgaan WHERE {
+      SELECT ?besluit ?title ?publicatie_datum ?agendapunt ?zitting ?orgaan WHERE {
         ?besluit a besluit:Besluit ;
           a <https://data.vlaanderen.be/id/concept/BesluitType/67378dd0-5413-474b-8996-d992ef81637a> ;
-          eli:date_publication ?date ;
+          eli:date_publication ?publicatie_datum ;
           eli:title_short ?title ;
           ${queryBestuursorgaan}
         ?bestuursorgaanURI skos:prefLabel ?orgaan . 
         ${filterparams}
-      } ORDER BY DESC(?date) LIMIT ${amount}`;
+      } ORDER BY DESC(?publicatie_datum) LIMIT ${amount}`;
   }
 
   getTemplate() {
@@ -115,7 +115,7 @@ class ReglementenLijst extends HTMLElement {
         <ul class="reglementen-list__items">
         </ul>
     
-        <slot name="link"><a href="https://ebesluitvorming.gent.be/">Alle reglementen van Stad Gent</a></slot>
+        <slot name="raadpleegomgeving"><a href="https://ebesluitvorming.gent.be/">Alle reglementen van Stad Gent</a></slot>
       </template>
     `;
 

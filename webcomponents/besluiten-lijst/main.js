@@ -21,7 +21,7 @@ class BesluitenLijst extends HTMLElement {
         <besluiten-detail
           titel="${besluit.title.value}"
           orgaan="${besluit.orgaan.value}"
-          datum="${besluit.date.value}"
+          datum="${besluit.zitting_datum.value}"
           url="${url}"
           status="@todo"
         >
@@ -76,6 +76,7 @@ class BesluitenLijst extends HTMLElement {
         prov:wasGeneratedBy/dct:subject ?agendapunt .     
     
       ?zitting besluit:behandelt ?agendapunt ;
+        besluit:geplandeStart ?zitting_datum ;
         besluit:isGehoudenDoor/mandaat:isTijdspecialisatieVan ?bestuursorgaanURI .`;
 
     // TODO: remove with query below after Bestuursorgaan has been moved to Zitting iso BehandelingVanAgendapunt
@@ -85,7 +86,9 @@ class BesluitenLijst extends HTMLElement {
         prov:wasGeneratedBy ?behandelingVanAgendapunt .
         ?behandelingVanAgendapunt dct:subject ?agendapunt ;
           besluit:isGehoudenDoor/mandaat:isTijdspecialisatieVan ?bestuursorgaanURI .
-        ?zitting besluit:behandelt ?agendapunt .`;
+        ?zitting besluit:behandelt ?agendapunt ;
+          besluit:geplandeStart ?zitting_datum.
+      `;
     }
     
     return `
@@ -95,15 +98,16 @@ class BesluitenLijst extends HTMLElement {
       PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
       PREFIX mandaat: <http://data.vlaanderen.be/ns/mandaat#>
-      
-      SELECT ?besluit ?title ?date ?agendapunt ?zitting ?orgaan WHERE {
+
+      SELECT ?besluit ?title ?publication_date ?agendapunt ?zitting ?zitting_datum ?orgaan WHERE {
         ?besluit a besluit:Besluit ;
-          eli:date_publication ?date ;
+          eli:date_publication ?publication_date ;
           eli:title_short ?title ;
         ${queryBestuursorgaan}
         ?bestuursorgaanURI skos:prefLabel ?orgaan . 
         ${filterparams}
-      } ORDER BY DESC(?date) LIMIT ${amount}`;
+      } ORDER BY DESC(?zitting_datum) LIMIT ${amount}
+    `;
   }
 
   getTemplate() {
@@ -114,7 +118,7 @@ class BesluitenLijst extends HTMLElement {
         <ul class="besluiten-list__items">
         </ul>
     
-        <slot name="link"><a href="https://ebesluitvorming.gent.be/">Alle besluiten van Stad Gent</a></slot>
+        <slot name="raadpleegomgeving"><a href="https://ebesluitvorming.gent.be/">Alle besluiten van Stad Gent</a></slot>
       </template>
     `;
 

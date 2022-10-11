@@ -25,7 +25,7 @@ class BesluitenDetail extends HTMLElement {
         </h3>
         <p class="besluiten-list__item-content">
           <span>${this.orgaan}</span>
-          <span>Goedkeuring: ${this.datum}</span>
+          <span>Datum van de zitting: ${this.datum}</span>
         </p>
         <span class="besluiten-list__item-status">Status: ${this.status}</span>
       </div>

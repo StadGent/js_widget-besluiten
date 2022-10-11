@@ -25,7 +25,7 @@ class ReglementenDetail extends HTMLElement {
         </h3>
         <p class="besluiten-list__item-content">
           <span>${this.orgaan}</span>
-          <span>Goedkeuring: ${this.datum}</span>
+          <span>Datum van bekendmaking: ${this.datum}</span>
         </p>
         <span class="besluiten-list__item-status">Status: ${this.status}</span>
       </div>
@@ -93,7 +93,7 @@ class ReglementenDetail extends HTMLElement {
       ?zitting besluit:behandelt ?agendapunt .
     } LIMIT 1`
   }
-
+w
 }
 
 customElements.define('reglementen-detail', ReglementenDetail);
