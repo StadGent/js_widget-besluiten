@@ -9,34 +9,31 @@ class BesluitenLijst extends HTMLElement {
   }
 
   getUrl(besluit) {
-    var zitting = /[^/]*$/.exec(besluit.zitting.value)[0];
-    var agendapunt = /[^/]*$/.exec(besluit.agendapunt.value)[0];
+    let zitting = /[^/]*$/.exec(besluit.zitting.value)[0];
+    let agendapunt = /[^/]*$/.exec(besluit.agendapunt.value)[0];
     return `https://ebesluitvorming.gent.be/zittingen/${zitting}/agendapunten/${agendapunt}`;
   }
 
   createDetail(besluit) {
-    var url = this.getUrl(besluit);
-    return (`
-      <li>
-        <besluiten-detail
-          titel="${besluit.title.value}"
-          orgaan="${besluit.orgaan.value}"
-          datum="${besluit.zitting_datum.value}"
-          url="${url}"
-          status="@todo"
-        >
-      </li>
-    `);
+    let url = this.getUrl(besluit);
+    return `
+      <besluiten-detail
+        titel="${besluit.title.value}"
+        orgaan="${besluit.orgaan.value}"
+        datum="${besluit.zitting_datum.value}"
+        url="${url}"
+        status="@todo"
+      >
+    `;
   }
 
   renderResults(besluiten) {
     const template = this.getTemplate();
-    //this.appendChild(template.cloneNode(true));
-    const shadowRoot =this.attachShadow({mode: 'open'}).appendChild(
+    const shadowRoot = this.attachShadow({mode: 'open'}).appendChild(
       template.cloneNode(true)
     );
 
-    var list = "";
+    let list = "";
     besluiten.forEach(besluit => {
       list += this.createDetail(besluit)
     });
@@ -113,12 +110,28 @@ class BesluitenLijst extends HTMLElement {
   getTemplate() {
     const template = `
       <template id="template-besluiten-lijst">
-        <h2 class="besluiten-list__title"><slot name="title">Recente besluiten</slot></h2>
-    
-        <ul class="besluiten-list__items">
-        </ul>
-    
-        <slot name="raadpleegomgeving"><a href="https://ebesluitvorming.gent.be/">Alle besluiten van Stad Gent</a></slot>
+        <style>
+          @charset "UTF-8";
+          @import url("https://fonts.googleapis.com/css?family=Fira+Sans:400,600,700");
+          @import url("https://stijlgids.stad.gent/v5/css/styleguide.css");
+          @import url("https://stijlgids.stad.gent/v5/css/main.css");
+          h2 {
+            font: 600 26px Fira Sans,sans-serif;
+          }
+        </style>
+
+        <div class="cs--cyan">
+          <section class="cs--cyan highlight checklist highlight--top">
+            <div class="highlight__inner">
+              <h2><slot name="title">Recente besluiten</slot></h2>
+          
+              <div class="besluiten-list__items">
+              </div>
+          
+              <slot name="raadpleegomgeving"><a href="https://ebesluitvorming.gent.be/" class="button button-primary">Alle besluiten van Stad Gent</a></slot>
+            </div>
+          </section>
+        </div>
       </template>
     `;
 

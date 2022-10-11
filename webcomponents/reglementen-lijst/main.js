@@ -9,24 +9,22 @@ class ReglementenLijst extends HTMLElement {
   }
 
   getUrl(reglement) {
-    var zitting = /[^/]*$/.exec(reglement.zitting.value)[0];
-    var agendapunt = /[^/]*$/.exec(reglement.agendapunt.value)[0];
+    let zitting = /[^/]*$/.exec(reglement.zitting.value)[0];
+    let agendapunt = /[^/]*$/.exec(reglement.agendapunt.value)[0];
     return `https://ebesluitvorming.gent.be/zittingen/${zitting}/agendapunten/${agendapunt}`;
   }
 
   createDetail(reglement) {
-    var url = this.getUrl(reglement);
-    return (`
-      <li>
-        <reglementen-detail
-          titel="${reglement.title.value}"
-          orgaan="${reglement.orgaan.value}"
-          datum="${reglement.publicatie_datum.value}"
-          url="${url}"
-          type="@todo"
-        >
-      </li>
-    `);
+    let url = this.getUrl(reglement);
+    return `
+      <reglementen-detail
+        titel="${reglement.title.value}"
+        orgaan="${reglement.orgaan.value}"
+        datum="${reglement.publicatie_datum.value}"
+        url="${url}"
+        type="@todo"
+      >
+    `;
   }
 
   renderResults(reglementen) {
@@ -36,7 +34,7 @@ class ReglementenLijst extends HTMLElement {
       template.cloneNode(true)
     );
 
-    var list = "";
+    let list = "";
     reglementen.forEach(reglement => {
       list += this.createDetail(reglement)
     });
@@ -110,12 +108,28 @@ class ReglementenLijst extends HTMLElement {
   getTemplate() {
     const template = `
       <template id="template-reglementen-lijst">
-        <h2 class="reglementen-list__title"><slot name="title">Recente reglementen</slot></h2>
+        <style>
+          @charset "UTF-8";
+          @import url("https://fonts.googleapis.com/css?family=Fira+Sans:400,600,700");
+          @import url("https://stijlgids.stad.gent/v5/css/styleguide.css");
+          @import url("https://stijlgids.stad.gent/v5/css/main.css");
+          h2 {
+            font: 600 26px Fira Sans,sans-serif;
+          }
+        </style>
     
-        <ul class="reglementen-list__items">
-        </ul>
-    
-        <slot name="raadpleegomgeving"><a href="https://ebesluitvorming.gent.be/">Alle reglementen van Stad Gent</a></slot>
+        <div class="cs--cyan">
+          <section class="cs--cyan highlight checklist highlight--top">
+            <div class="highlight__inner">
+              <h2><slot name="title">Recente reglementen</slot></h2>
+          
+              <div class="reglementen-list__items">
+              </div>
+          
+              <slot name="raadpleegomgeving"><a href="https://ebesluitvorming.gent.be/" class="button button-primary">Alle reglementen van Stad Gent</a></slot>
+            </div>
+          </section>
+        </div>
       </template>
     `;
 

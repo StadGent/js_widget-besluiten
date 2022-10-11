@@ -19,21 +19,31 @@ class BesluitenDetail extends HTMLElement {
 
   createDetail() {
     return (`
-      <h3>
-        <a href="${this.url}">${this.titel}</a>
-      </h3>
-      <p>
-        <span class="orgaan">Orgaan: <span class="value">${this.orgaan}</span></span>
-        <span class="separator">|</span>
-        <span class="datum">Datum van de zitting: <span class="value">${this.datum}</span></span>
-        <span class="status">${this.status} status</span>
-      </p>
+      <style>
+        @charset "UTF-8";
+        @import url("https://fonts.googleapis.com/css?family=Fira+Sans:400,600,700");
+        @import url("https://stijlgids.stad.gent/v5/css/styleguide.css");
+        @import url("https://stijlgids.stad.gent/v5/css/main.css");
+      </style>
+      <div class="card">
+        <div>
+          <h3>
+            <a href="${this.url}">${this.titel}</a>
+          </h3>
+          <div>
+            <span class="orgaan">Orgaan: <span class="value">${this.orgaan}</span></span>
+            <span class="separator">|</span>
+            <span class="datum">Datum van de zitting: <span class="value">${this.datum}</span></span>
+            <span class="status">${this.status} status</span>
+          </div>
+          </div>
+      </div>
     `);
   }
 
   getUrl(besluit) {
-    var zitting = /[^/]*$/.exec(besluit.zitting.value)[0];
-    var agendapunt = /[^/]*$/.exec(besluit.agendapunt.value)[0];
+    let zitting = /[^/]*$/.exec(besluit.zitting.value)[0];
+    let agendapunt = /[^/]*$/.exec(besluit.agendapunt.value)[0];
     return `https://ebesluitvorming.gent.be/zittingen/${zitting}/agendapunten/${agendapunt}`;
   }
 
