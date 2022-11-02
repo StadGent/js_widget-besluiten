@@ -112,7 +112,7 @@ class ReglementenDetail extends HTMLElement {
       ?zitting besluit:behandelt ?agendapunt .
     } LIMIT 1`
   }
-w
+
 }
 
 customElements.define('reglementen-detail', ReglementenDetail);
