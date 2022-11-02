@@ -24,29 +24,19 @@ class BesluitenDetail extends HTMLElement {
         @import url("https://fonts.googleapis.com/css?family=Fira+Sans:400,600,700");
         @import url("https://stijlgids.stad.gent/v5/css/styleguide.css");
         @import url("https://stijlgids.stad.gent/v5/css/main.css");
-        besluiten-detail dd, besluiten-detail dt {
-          display: inline;
-          padding-left: 0;
-        }
-        besluiten-detail dl>dd:not(:last-of-type):after {
-          display: inline-block;
-          padding: 0 0.2em;
-          content: "\\007C";
-        }
+        @import url("../besluiten-detail/besluiten-detail.css");
       </style>
-      <div class="card">
-        <div>
-          <h3>
-            <a href="${this.url}">${this.titel}</a>
-          </h3>
-          <dl>
-            <dt>Orgaan:</dt>
-            <dd>${this.orgaan}</dd>
-            <dt>Datum van de zitting:</dt>
-            <dd>${this.datum}</dd>
-          </dl>
-          <span class="status" style="display: none">${this.status} status</span>
-        </div>
+      <div class="besluiten-detail">
+        <h3 class="besluiten-detail__title">
+          <a href="${this.url}" class="besluiten-detail__link">${this.titel}</a>
+        </h3>
+        <dl class="besluiten-detail__list">
+          <dt>Orgaan:</dt>
+          <dd>${this.orgaan}</dd>
+          <dt>Datum van de zitting:</dt>
+          <dd>${this.datum}</dd>
+        </dl>
+        <span class="besluiten-detail__status besluiten-detail__status--true" >${this.status} status</span>
       </div>
     `);
   }
