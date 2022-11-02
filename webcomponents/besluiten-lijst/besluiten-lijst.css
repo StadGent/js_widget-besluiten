@@ -1,0 +1,21 @@
+.besluiten-lijst .highlight__inner {
+  padding-right: 2rem !important;
+}
+
+.besluiten-lijst.cs--cyan .highlight--top .highlight__inner:before {
+  background-image: url(hammer.svg);
+}
+
+.besluiten-lijst__items {
+  margin-block: 1rem;
+}
+
+.besluiten-lijst__cta {
+  align-self: start;
+}
+
+@media (min-width: 768px) {
+  .besluiten-lijst__title {
+    max-width: calc(100% - 8rem);
+  }
+}

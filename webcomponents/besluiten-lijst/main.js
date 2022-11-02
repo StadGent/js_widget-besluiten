@@ -37,7 +37,7 @@ class BesluitenLijst extends HTMLElement {
     besluiten.forEach(besluit => {
       list += this.createDetail(besluit)
     });
-    this.shadowRoot.querySelectorAll(".besluiten-list__items")[0].innerHTML = list;
+    this.shadowRoot.querySelectorAll(".js-decisions-items")[0].innerHTML = list;
   }
 
   async getBesluiten() {
@@ -115,23 +115,18 @@ class BesluitenLijst extends HTMLElement {
           @import url("https://fonts.googleapis.com/css?family=Fira+Sans:400,600,700");
           @import url("https://stijlgids.stad.gent/v5/css/styleguide.css");
           @import url("https://stijlgids.stad.gent/v5/css/main.css");
-          h2 {
-            font: 600 26px Fira Sans,sans-serif;
-          }
-          .highlight--top .highlight__inner {
-            padding-right: 2rem!important;
-          }
+          @import url("../besluiten-lijst/besluiten-lijst.css");
         </style>
 
-        <div class="cs--cyan">
-          <section class="cs--cyan highlight checklist highlight--top">
+        <div class="besluiten-lijst cs--cyan">
+          <section class="highlight highlight--top">
             <div class="highlight__inner">
-              <h2><slot name="title">Recente besluiten</slot></h2>
+              <h2 class="besluiten-lijst__title"><slot name="title">Recente besluiten</slot></h2>
           
-              <div class="besluiten-list__items">
+              <div class="besluiten-lijst__items js-decisions-items">
               </div>
           
-              <slot name="raadpleegomgeving"><a href="https://ebesluitvorming.gent.be/" class="button button-primary">Alle besluiten van Stad Gent</a></slot>
+              <slot name="raadpleegomgeving"><a href="https://ebesluitvorming.gent.be/" class="besluiten-lijst__cta button button-primary">Alle besluiten van Stad Gent</a></slot>
             </div>
           </section>
         </div>
