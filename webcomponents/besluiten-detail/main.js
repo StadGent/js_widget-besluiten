@@ -37,7 +37,7 @@ class BesluitenDetail extends HTMLElement {
             <dt>Datum van de zitting:</dt>
             <dd>${this.datum}</dd>
           </dl>
-          <span class="besluiten-detail__status besluiten-detail__status--true" >${this.status} status</span>
+          <span class="resolutions-detail__status resolutions-detail__status--true" >${this.status} status</span>
         </div>
       </li>
     `);
