@@ -1,4 +1,4 @@
-.besluiten-detail {
+.resolutions-detail {
   position: relative;
   display: grid;
   grid-template-columns: 1fr;
@@ -11,46 +11,46 @@
   background-color: white;
 }
 
-.besluiten-detail__title {
+.resolutions-detail__title {
   grid-row: 1;
   margin-bottom: .2rem;
   font-size: .9rem;
 }
 
-.besluiten-detail__link {
+.resolutions-detail__link {
   border: none;
 }
 
-.besluiten-detail__link:before {
+.resolutions-detail__link:before {
   content: '';
   position: absolute;
   inset: 0;
   z-index: 1;
 }
 
-.besluiten-detail__list {
+.resolutions-detail__list {
   font-size: .6rem;
   margin: 0;
 }
 
-.besluiten-detail__list dt {
+.resolutions-detail__list dt {
   position: relative;
   display: inline-block;
   font-weight: 600;
 }
 
-.besluiten-detail__list dd {
+.resolutions-detail__list dd {
   position: relative;
   display: inline-block;
   padding: 0;
   margin: 0;
 }
 
-.besluiten-detail__list dt ~ dd:not(:last-of-type) {
+.resolutions-detail__list dt ~ dd:not(:last-of-type) {
   margin-inline-end: .7em;
 }
 
-.besluiten-detail__list dt ~ dd:not(:last-of-type):after {
+.resolutions-detail__list dt ~ dd:not(:last-of-type):after {
   content: "";
   position: absolute;
   top: .2rem;
@@ -59,7 +59,7 @@
   border-right: thin solid currentColor;
 }
 
-.besluiten-detail__status {
+.resolutions-detail__status {
   position: relative;
   display: inline-block;
   justify-self: start;
@@ -72,7 +72,7 @@
   margin-top: .6rem;
 }
 
-.besluiten-detail__status--true {
+.resolutions-detail__status--true {
   /*
   @extend .icon-checkmark-circle
   */
@@ -80,7 +80,7 @@
   background-color: #CEEACC;
 }
 
-.besluiten-detail__status--false {
+.resolutions-detail__status--false {
   /*
   @extend .icon-cross
   */
@@ -89,11 +89,11 @@
 }
 
 @media (min-width: 768px) {
-  .besluiten-detail {
+  .resolutions-detail {
     grid-template-columns: 1fr minmax(auto, 6rem);
   }
 
-  .besluiten-detail__status {
+  .resolutions-detail__status {
     grid-row: 1;
     grid-column: 2 / -1;
     align-self: start;

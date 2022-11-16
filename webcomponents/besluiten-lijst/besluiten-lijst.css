@@ -1,21 +1,24 @@
-.besluiten-lijst .highlight__inner {
+.resolutions-list .highlight__inner {
   padding-right: 2rem !important;
 }
 
-.besluiten-lijst.cs--cyan .highlight--top .highlight__inner:before {
+.resolutions-list.cs--cyan .highlight--top .highlight__inner:before {
   background-image: url(hammer.svg);
 }
 
-.besluiten-lijst__items {
-  margin-block: 1rem;
-}
-
-.besluiten-lijst__cta {
+.resolutions-list .button {
   align-self: start;
 }
 
+.resolutions-list__items {
+  margin-left: 0;
+  padding-left: 0;
+  list-style: none;
+  margin-block: 1rem;
+}
+
 @media (min-width: 768px) {
-  .besluiten-lijst__title {
+  .resolutions-list h2 {
     max-width: calc(100% - 8rem);
   }
 }

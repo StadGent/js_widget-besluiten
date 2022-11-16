@@ -37,7 +37,7 @@ class BesluitenLijst extends HTMLElement {
     besluiten.forEach(besluit => {
       list += this.createDetail(besluit)
     });
-    this.shadowRoot.querySelectorAll(".js-decisions-items")[0].innerHTML = list;
+    this.shadowRoot.querySelectorAll(".js-resolutions-items")[0].innerHTML = list;
   }
 
   async getBesluiten() {
@@ -118,15 +118,15 @@ class BesluitenLijst extends HTMLElement {
           @import url("../besluiten-lijst/besluiten-lijst.css");
         </style>
 
-        <div class="besluiten-lijst cs--cyan">
+        <div class="resolutions-list cs--cyan">
           <section class="highlight highlight--top">
             <div class="highlight__inner">
-              <h2 class="besluiten-lijst__title"><slot name="title">Recente besluiten</slot></h2>
+              <h2><slot name="title">Recente besluiten</slot></h2>
           
-              <div class="besluiten-lijst__items js-decisions-items">
+              <div class="resolutions-list__items js-resolutions-items">
               </div>
           
-              <slot name="raadpleegomgeving"><a href="https://ebesluitvorming.gent.be/" class="besluiten-lijst__cta button button-primary">Alle besluiten van Stad Gent</a></slot>
+              <slot name="raadpleegomgeving"><a href="https://ebesluitvorming.gent.be/" class="button button-primary">Alle besluiten van Stad Gent</a></slot>
             </div>
           </section>
         </div>

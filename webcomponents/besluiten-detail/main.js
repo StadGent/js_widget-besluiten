@@ -26,18 +26,20 @@ class BesluitenDetail extends HTMLElement {
         @import url("https://stijlgids.stad.gent/v5/css/main.css");
         @import url("../besluiten-detail/besluiten-detail.css");
       </style>
-      <div class="besluiten-detail">
-        <h3 class="besluiten-detail__title">
-          <a href="${this.url}" class="besluiten-detail__link">${this.titel}</a>
-        </h3>
-        <dl class="besluiten-detail__list">
-          <dt>Orgaan:</dt>
-          <dd>${this.orgaan}</dd>
-          <dt>Datum van de zitting:</dt>
-          <dd>${this.datum}</dd>
-        </dl>
-        <span class="besluiten-detail__status besluiten-detail__status--true" >${this.status} status</span>
-      </div>
+      <li>
+        <div class="resolutions-detail">
+          <h3 class="resolutions-detail__title">
+            <a href="${this.url}" class="resolutions-detail__link">${this.titel}</a>
+          </h3>
+          <dl class="resolutions-detail__list">
+            <dt>Orgaan:</dt>
+            <dd>${this.orgaan}</dd>
+            <dt>Datum van de zitting:</dt>
+            <dd>${this.datum}</dd>
+          </dl>
+          <span class="besluiten-detail__status besluiten-detail__status--true" >${this.status} status</span>
+        </div>
+      </li>
     `);
   }
 
