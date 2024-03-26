@@ -1,24 +1,43 @@
-.resolutions-list .highlight__inner {
-  padding-right: 2rem !important;
+besluiten-lijst,
+reglementen-lijst {
+  text-align: left;
 }
 
-.resolutions-list.cs--cyan .highlight--top .highlight__inner:before {
-  background-image: url(hammer.svg);
+.resolutions-list .highlight .highlight__inner,
+.reglementen-list .highlight .highlight__inner {
+  margin: 0 !important;
+  padding: 0 !important;
+  background-color: transparent !important;
 }
 
-.resolutions-list .button {
+.resolutions-list .highlight__inner::after,
+.reglementen-list .highlight__inner::after {
+  display: none !important;
+}
+
+.resolutions-list .button,
+.reglementen-list .button {
   align-self: start;
+  margin: 0 20px 60px 20px;
 }
 
-.resolutions-list__items {
-  margin-left: 0;
-  padding-left: 0;
+.resolutions-list__items,
+.reglementen-list__items {
+  margin: 0;
+  margin-block: 0 !important;
+  padding: 0;
   list-style: none;
-  margin-block: 1rem;
 }
 
 @media (min-width: 768px) {
-  .resolutions-list h2 {
-    max-width: calc(100% - 8rem);
+  .resolutions-list slot[name=title] h2,
+  .reglementen-list slot[name=title] h2 {
+    align-items: flex-end;
+    flex-direction: unset;
+  }
+
+  .resolutions-list .button,
+  .reglementen-list .button {
+    margin: 0 0 60px 0;
   }
 }

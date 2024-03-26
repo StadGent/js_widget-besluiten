@@ -19,18 +19,15 @@ class BesluitenDetail extends HTMLElement {
 
   createDetail() {
     return (`
-      <style>
-        @charset "UTF-8";
-        @import url("https://fonts.googleapis.com/css?family=Fira+Sans:400,600,700");
-        @import url("https://stijlgids.stad.gent/v5/css/styleguide.css");
-        @import url("https://stijlgids.stad.gent/v5/css/main.css");
-        @import url("../besluiten-detail/besluiten-detail.css");
-      </style>
-      <li>
+      <li class="cs--blue" style="list-style-type:none;">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Sans:400,600,700">
+        <link rel="stylesheet" href="https://stijlgids.stad.gent/v6/css/styleguide.css">
+        <link rel="stylesheet" href="https://stijlgids.stad.gent/v6/css/main.css">
+        <link rel="stylesheet" href="/webcomponents/besluiten-detail/besluiten-detail.css">
         <div class="resolutions-detail">
-          <h3 class="resolutions-detail__title">
+          <div class="resolutions-detail__title">
             <a href="${this.url}" class="resolutions-detail__link">${this.titel}</a>
-          </h3>
+          </div>
           <dl class="resolutions-detail__list">
             <dt>Orgaan:</dt>
             <dd>${this.orgaan}</dd>

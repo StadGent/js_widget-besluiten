@@ -38,7 +38,7 @@ class ReglementenLijst extends HTMLElement {
     reglementen.forEach(reglement => {
       list += this.createDetail(reglement)
     });
-    this.shadowRoot.querySelectorAll(".reglementen-list__items")[0].innerHTML = list;
+    this.shadowRoot.querySelectorAll(".js-reglementen-items")[0].innerHTML = list;
   }
 
   async getReglementen() {
@@ -62,8 +62,8 @@ class ReglementenLijst extends HTMLElement {
 
   constructQuery() {
     const amount = this.getAttribute('aantal');
-    
-    const bestuursorganen = this.getAttribute('bestuursorganen')  
+
+    const bestuursorganen = this.getAttribute('bestuursorganen')
     let filterparams = "";
     if (bestuursorganen) {
       const bestuursorganenArray = bestuursorganen.split(" ");
@@ -85,7 +85,7 @@ class ReglementenLijst extends HTMLElement {
           besluit:isGehoudenDoor/mandaat:isTijdspecialisatieVan ?bestuursorgaanURI .
         ?zitting besluit:behandelt ?agendapunt .`;
     }
-    
+
     return `
       PREFIX dct: <http://purl.org/dc/terms/>
       PREFIX prov: <http://www.w3.org/ns/prov#>
@@ -107,28 +107,17 @@ class ReglementenLijst extends HTMLElement {
 
   getTemplate() {
     const template = `
-      <template id="template-reglementen-lijst">
-        <style>
-          @charset "UTF-8";
-          @import url("https://fonts.googleapis.com/css?family=Fira+Sans:400,600,700");
-          @import url("https://stijlgids.stad.gent/v5/css/styleguide.css");
-          @import url("https://stijlgids.stad.gent/v5/css/main.css");
-          h2 {
-            font: 600 26px Fira Sans,sans-serif;
-          }
-          .highlight--top .highlight__inner {
-            padding-right: 2rem!important;
-          }
-        </style>
-    
-        <div class="cs--cyan">
-          <section class="cs--cyan highlight checklist highlight--top">
+      <template id="template-reglementen-lijst">    
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Sans:400,600,700">
+        <link rel="stylesheet" href="https://stijlgids.stad.gent/v6/css/styleguide.css">
+        <link rel="stylesheet" href="https://stijlgids.stad.gent/v6/css/main.css">
+        <link rel="stylesheet" href="/webcomponents/besluiten-lijst/besluiten-lijst.css">
+        
+        <div class="reglementen-list cs--blue">
+          <section class="highlight">
             <div class="highlight__inner">
-              <h2><slot name="title">Recente reglementen</slot></h2>
-          
-              <div class="reglementen-list__items">
-              </div>
-          
+              <slot name="title">Recente reglementen</slot>
+              <div class="reglementen-list__items js-reglementen-items"></div>
               <slot name="raadpleegomgeving"><a href="https://ebesluitvorming.gent.be/" class="button button-primary">Alle reglementen van Stad Gent</a></slot>
             </div>
           </section>

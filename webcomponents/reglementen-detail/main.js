@@ -19,34 +19,22 @@ class ReglementenDetail extends HTMLElement {
 
   createDetail() {
     return (`
-      <style>
-        @charset "UTF-8";
-        @import url("https://fonts.googleapis.com/css?family=Fira+Sans:400,600,700");
-        @import url("https://stijlgids.stad.gent/v5/css/styleguide.css");
-        @import url("https://stijlgids.stad.gent/v5/css/main.css");
-        reglementen-detail dd, reglementen-detail dt {
-          display: inline;
-          padding-left: 0;
-        }
-        reglementen-detail dl>dd:not(:last-of-type):after {
-          display: inline-block;
-          padding: 0 0.2em;
-          content: "\\007C";
-        }
-      </style>
-      <div class="card">
-        <div>
-          <h3>
-            <a href="${this.url}">${this.titel}</a>
-          </h3>
-          <dl>
-            <dt>Orgaan:</dt>
-            <dd>${this.orgaan}</dd>
-            <dt>Datum van bekendmaking:</dt>
-            <dd>${this.datum}</dd>
-          </dl>
-          <span class="type" style="display: none">${this.type} type</span>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Sans:400,600,700">
+      <link rel="stylesheet" href="https://stijlgids.stad.gent/v6/css/styleguide.css">
+      <link rel="stylesheet" href="https://stijlgids.stad.gent/v6/css/main.css">
+      <link rel="stylesheet" href="/webcomponents/besluiten-detail/besluiten-detail.css">
+      
+      <div class="reglementen-detail">
+        <div class="reglementen-detail__title">
+          <a href="${this.url}" class="resolutions-detail__link">${this.titel}</a>
         </div>
+        <dl class="reglementen-detail__list">
+          <dt>Orgaan:</dt>
+          <dd>${this.orgaan}</dd>
+          <dt>Datum van bekendmaking:</dt>
+          <dd>${this.datum}</dd>
+        </dl>
+        <span class="resolutions-detail__status" >${this.type} type</span>
       </div>
     `);
   }

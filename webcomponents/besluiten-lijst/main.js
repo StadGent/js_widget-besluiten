@@ -61,8 +61,8 @@ class BesluitenLijst extends HTMLElement {
 
   constructQuery() {
     const amount = this.getAttribute('aantal');
-    
-    const bestuursorganen = this.getAttribute('bestuursorganen')  
+
+    const bestuursorganen = this.getAttribute('bestuursorganen')
     let filterparams = "";
     if (bestuursorganen) {
       const bestuursorganenArray = bestuursorganen.split(" ");
@@ -87,7 +87,7 @@ class BesluitenLijst extends HTMLElement {
           besluit:geplandeStart ?zitting_datum.
       `;
     }
-    
+
     return `
       PREFIX dct: <http://purl.org/dc/terms/>
       PREFIX prov: <http://www.w3.org/ns/prov#>
@@ -110,22 +110,18 @@ class BesluitenLijst extends HTMLElement {
   getTemplate() {
     const template = `
       <template id="template-besluiten-lijst">
-        <style>
-          @charset "UTF-8";
-          @import url("https://fonts.googleapis.com/css?family=Fira+Sans:400,600,700");
-          @import url("https://stijlgids.stad.gent/v5/css/styleguide.css");
-          @import url("https://stijlgids.stad.gent/v5/css/main.css");
-          @import url("../besluiten-lijst/besluiten-lijst.css");
-        </style>
-
-        <div class="resolutions-list cs--cyan">
-          <section class="highlight highlight--top">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Sans:400,600,700">
+        <link rel="stylesheet" href="https://stijlgids.stad.gent/v6/css/styleguide.css">
+        <link rel="stylesheet" href="https://stijlgids.stad.gent/v6/css/main.css">
+        <link rel="stylesheet" href="/webcomponents/besluiten-lijst/besluiten-lijst.css">
+        
+        <div class="resolutions-list cs--blue">
+          <section class="highlight">
             <div class="highlight__inner">
-              <h2><slot name="title">Recente besluiten</slot></h2>
-          
-              <div class="resolutions-list__items js-resolutions-items">
-              </div>
-          
+              <slot name="title">Recente besluiten</slot>
+              
+              <div class="resolutions-list__items js-resolutions-items"></div>
+              
               <slot name="raadpleegomgeving"><a href="https://ebesluitvorming.gent.be/" class="button button-primary">Alle besluiten van Stad Gent</a></slot>
             </div>
           </section>
