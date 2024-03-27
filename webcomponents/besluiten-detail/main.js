@@ -23,7 +23,7 @@ class BesluitenDetail extends HTMLElement {
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Sans:400,600,700">
         <link rel="stylesheet" href="https://stijlgids.stad.gent/v6/css/styleguide.css">
         <link rel="stylesheet" href="https://stijlgids.stad.gent/v6/css/main.css">
-        <link rel="stylesheet" href="/webcomponents/besluiten-detail/besluiten-detail.css">
+        <link rel="stylesheet" href="https://stadgent.github.io/js_widget-besluiten/besluiten-detail/besluiten-detail.css">
         <div class="resolutions-detail">
           <div class="resolutions-detail__title">
             <a href="${this.url}" class="resolutions-detail__link">${this.titel}</a>
