@@ -113,7 +113,7 @@ class BesluitenLijst extends HTMLElement {
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Sans:400,600,700">
         <link rel="stylesheet" href="https://stijlgids.stad.gent/v6/css/styleguide.css">
         <link rel="stylesheet" href="https://stijlgids.stad.gent/v6/css/main.css">
-        <link rel="stylesheet" href="/webcomponents/besluiten-lijst/besluiten-lijst.css">
+        <link rel="stylesheet" href="https://stadgent.github.io/js_widget-besluiten/besluiten-lijst/besluiten-lijst.css">
         
         <div class="resolutions-list cs--blue">
           <section class="highlight">
