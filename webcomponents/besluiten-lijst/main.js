@@ -118,7 +118,7 @@ class BesluitenLijst extends HTMLElement {
         <div class="resolutions-list cs--blue">
           <section class="highlight">
             <div class="highlight__inner">
-              <slot name="title">Recente besluiten</slot>
+              <slot name="title" class="h3">Recente besluiten</slot>
               
               <div class="resolutions-list__items js-resolutions-items"></div>
               
