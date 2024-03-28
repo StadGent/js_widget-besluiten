@@ -3,6 +3,38 @@ reglementen-lijst {
   text-align: left;
 }
 
+[slot=title],
+[name=title] {
+  display: block;
+  max-width: 100%;
+  margin: 0 0 30px 0;
+  padding: 0 20px;
+  align-items: flex-end;
+  text-align: center;
+}
+
+[slot=title]::before,
+[name=title]::before {
+  content: '';
+  display: block;
+  vertical-align: bottom;
+  align-self: center;
+  width: 65px;
+  height: 58px;
+  margin: 0 auto 30px auto;
+  background-size: contain;
+}
+
+besluiten-lijst [slot=title]::before,
+besluiten-lijst [name=title]::before {
+  background-image: url("https://stadgent.github.io/js_widget-besluiten/besluiten-lijst/hammer_new.svg");
+}
+
+reglementen-lijst [slot=title]::before,
+reglementen-lijst [name=title]::before {
+  background-image: url("https://stadgent.github.io/js_widget-besluiten/reglementen-lijst/book.svg");
+}
+
 .resolutions-list .highlight .highlight__inner,
 .reglementen-list .highlight .highlight__inner {
   margin: 0 !important;
@@ -34,6 +66,20 @@ reglementen-lijst {
   .reglementen-list slot[name=title] h2 {
     align-items: flex-end;
     flex-direction: unset;
+  }
+
+  [slot=title],
+  [name=title] {
+    margin: 0 0 30px 0;
+    padding: 0 20px 0 0;
+    text-align: left;
+  }
+
+  [slot=title]::before,
+  [name=title]::before {
+    content: '';
+    display: inline-block;
+    margin: 0 30px 0 0;
   }
 
   .resolutions-list .button,
