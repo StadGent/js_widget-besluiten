@@ -25,13 +25,13 @@ reglementen-lijst {
   background-size: contain;
 }
 
-besluiten-lijst [slot=title]::before,
-besluiten-lijst [name=title]::before {
+.resolutions-list [slot=title]::before,
+.resolutions-list [name=title]::before {
   background-image: url("https://stadgent.github.io/js_widget-besluiten/besluiten-lijst/hammer_new.svg");
 }
 
-reglementen-lijst [slot=title]::before,
-reglementen-lijst [name=title]::before {
+.reglementen-list [slot=title]::before,
+.reglementen-list [name=title]::before {
   background-image: url("https://stadgent.github.io/js_widget-besluiten/reglementen-lijst/book.svg");
 }
 
