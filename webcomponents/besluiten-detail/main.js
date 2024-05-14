@@ -40,17 +40,11 @@ class BesluitenDetail extends HTMLElement {
     `);
   }
 
-  getUrl(besluit) {
-    let zitting = /[^/]*$/.exec(besluit.zitting.value)[0];
-    let agendapunt = /[^/]*$/.exec(besluit.agendapunt.value)[0];
-    return `https://ebesluitvorming.gent.be/zittingen/${zitting}/agendapunten/${agendapunt}`;
-  }
-
   renderResults(besluit) {
     this.titel = besluit.title.value;
     this.orgaan = '@todo';
     this.datum = this.formatDate(besluit.date.value)
-    this.url = this.getUrl(besluit);
+    this.url = besluit.url.value;
     this.status = '@todo';
     this.innerHTML += this.createDetail();
   }
@@ -102,13 +96,11 @@ class BesluitenDetail extends HTMLElement {
     PREFIX eli: <http://data.europa.eu/eli/ontology#>
     PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
     
-    SELECT ?title ?date ?agendapunt ?zitting WHERE {
+    SELECT ?title ?date ?url WHERE {
       <${uri}> a besluit:Besluit ;
         eli:date_publication ?date ;
         eli:title_short ?title ;
-        prov:wasGeneratedBy/dct:subject ?agendapunt .
-    
-      ?zitting besluit:behandelt ?agendapunt .
+        prov:wasDerivedFrom ?url .
     } LIMIT 1`
   }
 

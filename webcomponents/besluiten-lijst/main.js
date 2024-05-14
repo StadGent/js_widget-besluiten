@@ -9,12 +9,13 @@ class BesluitenLijst extends HTMLElement {
   }
 
   createDetail(besluit) {
+    console.log(besluit);
     return `
       <besluiten-detail
         titel="${besluit.title.value}"
         orgaan="${besluit.orgaan.value}"
         datum="${besluit.zitting_datum.value}"
-        url="${besluit.url}"
+        url="${besluit.url.value}"
         status="@todo"
       ></besluiten-detail>
     `;
