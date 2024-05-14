@@ -90,9 +90,8 @@ class BesluitenLijst extends HTMLElement {
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
       PREFIX mandaat: <http://data.vlaanderen.be/ns/mandaat#>
 
-      SELECT ?besluit ?title ?publication_date ?agendapunt ?zitting ?zitting_datum ?orgaan ?url WHERE {
+      SELECT ?besluit ?title ?agendapunt ?zitting ?zitting_datum ?orgaan ?url WHERE {
         ?besluit a besluit:Besluit ;
-          eli:date_publication ?publication_date ;
           eli:title_short ?title ;
           prov:wasDerivedFrom ?url ;
         ${queryBestuursorgaan}
