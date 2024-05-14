@@ -37,7 +37,7 @@ class BesluitenLijst extends HTMLElement {
     besluiten.forEach(besluit => {
       list += this.createDetail(besluit)
     });
-    this.shadowRoot.querySelectorAll(".js-resolutions-items")[0].innerHTML = `<ul>${list}</ul>`;
+    this.shadowRoot.querySelectorAll(".js-resolutions-items")[0].innerHTML = list;
   }
 
   async getBesluiten() {
