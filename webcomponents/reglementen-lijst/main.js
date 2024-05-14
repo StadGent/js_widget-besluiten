@@ -8,20 +8,13 @@ class ReglementenLijst extends HTMLElement {
     this.getReglementen();
   }
 
-  getUrl(reglement) {
-    let zitting = /[^/]*$/.exec(reglement.zitting.value)[0];
-    let agendapunt = /[^/]*$/.exec(reglement.agendapunt.value)[0];
-    return `https://ebesluitvorming.gent.be/zittingen/${zitting}/agendapunten/${agendapunt}`;
-  }
-
   createDetail(reglement) {
-    let url = this.getUrl(reglement);
     return `
       <reglementen-detail
         titel="${reglement.title.value}"
         orgaan="${reglement.orgaan.value}"
         datum="${reglement.publicatie_datum.value}"
-        url="${url}"
+        url="${reglement.url}"
         type="@todo"
       ></reglementen-detail>
     `;
@@ -94,11 +87,12 @@ class ReglementenLijst extends HTMLElement {
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
       PREFIX mandaat: <http://data.vlaanderen.be/ns/mandaat#>
       
-      SELECT ?besluit ?title ?publicatie_datum ?agendapunt ?zitting ?orgaan WHERE {
+      SELECT ?besluit ?title ?publicatie_datum ?agendapunt ?zitting ?orgaan ?url WHERE {
         ?besluit a besluit:Besluit ;
           a <https://data.vlaanderen.be/id/concept/BesluitType/67378dd0-5413-474b-8996-d992ef81637a> ;
           eli:date_publication ?publicatie_datum ;
           eli:title_short ?title ;
+          prov:wasDerivedFrom ?url ;
           ${queryBestuursorgaan}
         ?bestuursorgaanURI skos:prefLabel ?orgaan . 
         ${filterparams}
