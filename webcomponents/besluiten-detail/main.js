@@ -13,7 +13,7 @@ class BesluitenDetail extends HTMLElement {
       this.datum = this.formatDate(this.getAttribute('datum'));
       this.url = this.getAttribute('url');
       this.status = this.getAttribute('status');
-      this.approved = this.getAttribute('status') == 'Goedgekeurd';
+      this.approved = ['Goedgekeurd', 'Behandeld'].includes(this.getAttribute('status'));;
       this.innerHTML += this.createDetail();
     }
   }
@@ -35,7 +35,7 @@ class BesluitenDetail extends HTMLElement {
             <dt>Datum van de zitting:</dt>
             <dd>${this.datum}</dd>
           </dl>
-          <span class="resolutions-detail__status resolutions-detail__status--true" >${this.status}</span>
+          <span class="resolutions-detail__status resolutions-detail__status--${this.approved ? 'true' : 'false'}" >${this.status}</span>
         </div>
       </div>
     `);
