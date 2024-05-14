@@ -19,7 +19,7 @@ class BesluitenDetail extends HTMLElement {
 
   createDetail() {
     return (`
-      <li class="cs--blue" style="list-style-type:none;">
+      <div class="cs--blue">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Sans:400,600,700">
         <link rel="stylesheet" href="https://stijlgids.stad.gent/v6/css/styleguide.css">
         <link rel="stylesheet" href="https://stijlgids.stad.gent/v6/css/main.css">
@@ -36,7 +36,7 @@ class BesluitenDetail extends HTMLElement {
           </dl>
           <span class="resolutions-detail__status resolutions-detail__status--true" >${this.status} status</span>
         </div>
-      </li>
+      </div>
     `);
   }
 

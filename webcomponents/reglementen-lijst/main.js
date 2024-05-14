@@ -23,7 +23,7 @@ class ReglementenLijst extends HTMLElement {
         datum="${reglement.publicatie_datum.value}"
         url="${url}"
         type="@todo"
-      />
+      ></reglementen-detail>
     `;
   }
 
@@ -38,7 +38,7 @@ class ReglementenLijst extends HTMLElement {
     reglementen.forEach(reglement => {
       list += this.createDetail(reglement)
     });
-    this.shadowRoot.querySelectorAll(".js-reglementen-items")[0].innerHTML = `<ul>${list}</ul>`;
+    this.shadowRoot.querySelectorAll(".js-reglementen-items")[0].innerHTML = list;
   }
 
   async getReglementen() {
