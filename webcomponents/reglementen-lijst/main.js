@@ -23,7 +23,7 @@ class ReglementenLijst extends HTMLElement {
         datum="${reglement.publicatie_datum.value}"
         url="${url}"
         type="@todo"
-      >
+      />
     `;
   }
 
