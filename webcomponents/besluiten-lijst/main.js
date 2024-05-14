@@ -90,13 +90,14 @@ class BesluitenLijst extends HTMLElement {
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
       PREFIX mandaat: <http://data.vlaanderen.be/ns/mandaat#>
 
-      SELECT ?besluit ?title ?agendapunt ?zitting ?zitting_datum ?orgaan ?url ?status WHERE {
+      SELECT DISTINCT ?besluit ?title ?agendapunt ?zitting ?zitting_datum ?orgaan ?url ?status WHERE {
         ?besluit a besluit:Besluit ;
           eli:title_short ?title ;
           prov:wasDerivedFrom ?url ;
           prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status ;
         ${queryBestuursorgaan}
-        ?bestuursorgaanURI skos:prefLabel ?orgaan . 
+        ?bestuursorgaanURI skos:prefLabel ?orgaanLabel . 
+        BIND(CONCAT(UCASE(SUBSTR(?orgaanLabel, 1, 1)), SUBSTR(?orgaanLabel, 2)) AS ?orgaan)
         ${filterparams}
       } ORDER BY DESC(?zitting_datum) LIMIT ${amount}
     `;
