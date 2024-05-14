@@ -16,7 +16,7 @@ class BesluitenLijst extends HTMLElement {
         orgaan="${besluit.orgaan.value}"
         datum="${besluit.zitting_datum.value}"
         url="${besluit.url.value}"
-        status="@todo"
+        status="${besluit.status.value}"
       ></besluiten-detail>
     `;
   }
@@ -90,10 +90,11 @@ class BesluitenLijst extends HTMLElement {
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
       PREFIX mandaat: <http://data.vlaanderen.be/ns/mandaat#>
 
-      SELECT ?besluit ?title ?agendapunt ?zitting ?zitting_datum ?orgaan ?url WHERE {
+      SELECT ?besluit ?title ?agendapunt ?zitting ?zitting_datum ?orgaan ?url ?status WHERE {
         ?besluit a besluit:Besluit ;
           eli:title_short ?title ;
           prov:wasDerivedFrom ?url ;
+          prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status ;
         ${queryBestuursorgaan}
         ?bestuursorgaanURI skos:prefLabel ?orgaan . 
         ${filterparams}

@@ -45,7 +45,7 @@ class BesluitenDetail extends HTMLElement {
     this.orgaan = '@todo';
     this.datum = this.formatDate(besluit.date.value)
     this.url = besluit.url.value;
-    this.status = '@todo';
+    this.status = besluit.status.value;
     this.innerHTML += this.createDetail();
   }
 
@@ -96,10 +96,11 @@ class BesluitenDetail extends HTMLElement {
     PREFIX eli: <http://data.europa.eu/eli/ontology#>
     PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
     
-    SELECT ?title ?date ?url WHERE {
+    SELECT ?title ?date ?url ?status WHERE {
       <${uri}> a besluit:Besluit ;
         eli:date_publication ?date ;
         eli:title_short ?title ;
+        prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status ;
         prov:wasDerivedFrom ?url .
     } LIMIT 1`
   }

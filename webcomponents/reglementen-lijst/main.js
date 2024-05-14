@@ -87,12 +87,13 @@ class ReglementenLijst extends HTMLElement {
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
       PREFIX mandaat: <http://data.vlaanderen.be/ns/mandaat#>
       
-      SELECT ?besluit ?title ?publicatie_datum ?agendapunt ?zitting ?orgaan ?url WHERE {
+      SELECT ?besluit ?title ?publicatie_datum ?agendapunt ?zitting ?orgaan ?url ?status WHERE {
         ?besluit a besluit:Besluit ;
           a <https://data.vlaanderen.be/id/concept/BesluitType/67378dd0-5413-474b-8996-d992ef81637a> ;
           eli:date_publication ?publicatie_datum ;
           eli:title_short ?title ;
           prov:wasDerivedFrom ?url ;
+          prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status ;
           ${queryBestuursorgaan}
         ?bestuursorgaanURI skos:prefLabel ?orgaan . 
         ${filterparams}
