@@ -38,7 +38,7 @@ class ReglementenLijst extends HTMLElement {
     reglementen.forEach(reglement => {
       list += this.createDetail(reglement)
     });
-    this.shadowRoot.querySelectorAll(".js-reglementen-items")[0].innerHTML = list;
+    this.shadowRoot.querySelectorAll(".js-reglementen-items")[0].innerHTML = `<ul>${list}</ul>`;
   }
 
   async getReglementen() {
