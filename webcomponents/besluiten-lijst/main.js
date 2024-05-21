@@ -56,19 +56,25 @@ class BesluitenLijst extends HTMLElement {
   constructQuery() {
     const amount = this.getAttribute('aantal');
 
+    const bestuurseenheden = this.getAttribute('bestuurseenheden')
     const bestuursorganen = this.getAttribute('bestuursorganen')
     let filterparams = "";
+    if (bestuurseenheden) {
+      const bestuurseenhedenArray = bestuursorganen.split(" ");
+      filterparams += "VALUES ?bestuureenheidURI { " + bestuurseenhedenArray.map(bestuurseenheid => `<${bestuurseenheid.trim()}>`).join(" ") + " }"
+    }
     if (bestuursorganen) {
       const bestuursorganenArray = bestuursorganen.split(" ");
       filterparams += "VALUES ?bestuursorgaanURI { " + bestuursorganenArray.map(bestuursorgaan => `<${bestuursorgaan.trim()}>`).join(" ") + " }"
     }
 
-    let queryBestuursorgaan = `           
+    let queryBestuursorgaan = `
         prov:wasGeneratedBy/dct:subject ?agendapunt .     
     
       ?zitting besluit:behandelt ?agendapunt ;
         besluit:geplandeStart ?zitting_datum ;
         besluit:isGehoudenDoor/mandaat:isTijdspecialisatieVan ?bestuursorgaanURI .`;
+    let queryBestuurseenheid = `?bestuursorgaanURI besluit:bestuurt ?bestuureenheidURI.`;
 
     // TODO: remove with query below after Bestuursorgaan has been moved to Zitting iso BehandelingVanAgendapunt
     const endpoint = this.getAttribute('sparql-endpoint')
@@ -96,6 +102,7 @@ class BesluitenLijst extends HTMLElement {
           prov:wasDerivedFrom ?url ;
           prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status ;
         ${queryBestuursorgaan}
+        ${queryBestuurseenheid}
         ?bestuursorgaanURI skos:prefLabel ?orgaanLabel . 
         BIND(CONCAT(UCASE(SUBSTR(?orgaanLabel, 1, 1)), SUBSTR(?orgaanLabel, 2)) AS ?orgaan)
         ${filterparams}
