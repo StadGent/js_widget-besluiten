@@ -56,9 +56,11 @@ class BesluitenLijst extends HTMLElement {
   constructQuery() {
     const amount = this.getAttribute('aantal');
 
-    const statussen = this.getAttribute('statussen')
-    const bestuurseenheden = this.getAttribute('bestuurseenheden')
-    const bestuursorganen = this.getAttribute('bestuursorganen')
+    const statussen = this.getAttribute('statussen');
+    const bestuurseenheden = this.getAttribute('bestuurseenheden');
+    const bestuursorganen = this.getAttribute('bestuursorganen');
+    const thema = this.getAttribute('thema') || 'http://stad.gent/id/concepts/decision_making_themes';
+    const concepts = this.getAttribute('concepts');
     let filterparams = "";
     if (statussen) {
       const statussenArray = statussen.split(",");
@@ -72,6 +74,10 @@ class BesluitenLijst extends HTMLElement {
       const bestuursorganenArray = bestuursorganen.split(" ");
       filterparams += "VALUES ?bestuursorgaanURI { " + bestuursorganenArray.map(bestuursorgaan => `<${bestuursorgaan.trim()}>`).join(" ") + " }"
     }
+    if (concepts) {
+      const conceptsArray = concepts.split(" ");
+      filterparams += "VALUES ?concept { " + conceptsArray.map(concept => `<${concept.trim()}>`).join(" ") + " }"
+    }
 
     let queryBestuursorgaan = `
         prov:wasGeneratedBy/dct:subject ?agendapunt .     
@@ -80,6 +86,15 @@ class BesluitenLijst extends HTMLElement {
         besluit:geplandeStart ?zitting_datum ;
         besluit:isGehoudenDoor/mandaat:isTijdspecialisatieVan ?bestuursorgaanURI .`;
     let queryBestuurseenheid = `?bestuursorgaanURI besluit:bestuurt ?bestuureenheidURI.`;
+    let queryThema;
+    if (concepts) {
+      queryThema = `
+        SERVICE <https://stad.gent/sparql> { 
+          ?concept a skos:Concept ;
+            skos:prefLabel ?label ;
+              skos:inScheme <http://stad.gent/id/concepts/decision_making_themes> .
+        }`;
+    }
 
     // @todo: remove OPTIONAL {} when eenheden are available.
     queryBestuurseenheid = `OPTIONAL {${queryBestuurseenheid}}`;
@@ -110,6 +125,7 @@ class BesluitenLijst extends HTMLElement {
           prov:wasDerivedFrom ?url ;
           prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status ;
         ${queryBestuursorgaan}
+        ${queryThema}
         ?bestuursorgaanURI skos:prefLabel ?orgaanLabel . 
         ${filterparams}
         BIND(CONCAT(UCASE(SUBSTR(?orgaanLabel, 1, 1)), SUBSTR(?orgaanLabel, 2)) AS ?orgaan)
