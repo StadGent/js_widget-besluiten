@@ -74,10 +74,6 @@ class BesluitenLijst extends HTMLElement {
       const bestuursorganenArray = bestuursorganen.split(" ");
       filterparams += "VALUES ?bestuursorgaanURI { " + bestuursorganenArray.map(bestuursorgaan => `<${bestuursorgaan.trim()}>`).join(" ") + " }"
     }
-    if (concepts) {
-      const conceptsArray = concepts.split(" ");
-      filterparams += "VALUES ?concept { " + conceptsArray.map(concept => `<${concept.trim()}>`).join(" ") + " }"
-    }
 
     let queryBestuursorgaan = `
         prov:wasGeneratedBy/dct:subject ?agendapunt .     
@@ -88,11 +84,14 @@ class BesluitenLijst extends HTMLElement {
     let queryBestuurseenheid = `?bestuursorgaanURI besluit:bestuurt ?bestuureenheidURI.`;
     let queryThema = '';
     if (concepts) {
+      const conceptsArray = concepts.split(" ");
+      filterparams += "VALUES ?concept { " + conceptsArray.map(concept => `<${concept.trim()}>`).join(" ") + " }"
       queryThema = `
         SERVICE <https://stad.gent/sparql> { 
           ?concept a skos:Concept ;
             skos:prefLabel ?label ;
               skos:inScheme <${taxonomy}> .
+          ${filterparams}
         }`;
     }
 
@@ -124,8 +123,8 @@ class BesluitenLijst extends HTMLElement {
           eli:title_short ?title ;
           prov:wasDerivedFrom ?url ;
           prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status ;
-        ${queryBestuursorgaan}
         ${queryThema}
+        ${queryBestuursorgaan}
         ?bestuursorgaanURI skos:prefLabel ?orgaanLabel . 
         ${filterparams}
         BIND(CONCAT(UCASE(SUBSTR(?orgaanLabel, 1, 1)), SUBSTR(?orgaanLabel, 2)) AS ?orgaan)
