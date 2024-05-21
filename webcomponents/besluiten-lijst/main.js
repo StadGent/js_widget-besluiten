@@ -56,9 +56,14 @@ class BesluitenLijst extends HTMLElement {
   constructQuery() {
     const amount = this.getAttribute('aantal');
 
+    const statussen = this.getAttribute('statussen')
     const bestuurseenheden = this.getAttribute('bestuurseenheden')
     const bestuursorganen = this.getAttribute('bestuursorganen')
     let filterparams = "";
+    if (statussen) {
+      const statussenArray = statussen.split(",");
+      filterparams += "VALUES ?status { " + statussenArray.map(status => `<${status.trim()}>`).join("@nl ") + " }"
+    }
     if (bestuurseenheden) {
       const bestuurseenhedenArray = bestuurseenheden.split(" ");
       filterparams += "VALUES ?bestuureenheidURI { " + bestuurseenhedenArray.map(bestuurseenheid => `<${bestuurseenheid.trim()}>`).join(" ") + " }"
