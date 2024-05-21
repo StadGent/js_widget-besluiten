@@ -68,8 +68,11 @@ class BesluitenLijst extends HTMLElement {
       filterparams += "}"
     }
     if (bestuurseenheden) {
+      // @todo: remove OPTIONAL {} when eenheden are available.
       const bestuurseenhedenArray = bestuurseenheden.split(" ");
+      filterparams += "OPTIONAL {"
       filterparams += "VALUES ?bestuureenheidURI { " + bestuurseenhedenArray.map(bestuurseenheid => `<${bestuurseenheid.trim()}>`).join(" ") + " }"
+      filterparams += "}"
     }
     if (bestuursorganen) {
       const bestuursorganenArray = bestuursorganen.split(" ");
