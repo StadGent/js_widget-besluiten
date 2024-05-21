@@ -59,7 +59,7 @@ class BesluitenLijst extends HTMLElement {
     const statussen = this.getAttribute('statussen');
     const bestuurseenheden = this.getAttribute('bestuurseenheden');
     const bestuursorganen = this.getAttribute('bestuursorganen');
-    const thema = this.getAttribute('thema') || 'http://stad.gent/id/concepts/decision_making_themes';
+    const taxonomy = this.getAttribute('taxonomy') || 'http://stad.gent/id/concepts/decision_making_themes';
     const concepts = this.getAttribute('concepts');
     let filterparams = "";
     if (statussen) {
@@ -92,7 +92,7 @@ class BesluitenLijst extends HTMLElement {
         SERVICE <https://stad.gent/sparql> { 
           ?concept a skos:Concept ;
             skos:prefLabel ?label ;
-              skos:inScheme <http://stad.gent/id/concepts/decision_making_themes> .
+              skos:inScheme <${taxonomy}> .
         }`;
     }
 
