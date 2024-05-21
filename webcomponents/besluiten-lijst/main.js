@@ -82,7 +82,7 @@ class BesluitenLijst extends HTMLElement {
     let queryBestuurseenheid = `?bestuursorgaanURI besluit:bestuurt ?bestuureenheidURI.`;
 
     // @todo: remove OPTIONAL {} when eenheden are available.
-    queryBestuurseenheid = "OPTIONAL {${queryBestuurseenheid}}";
+    queryBestuurseenheid = `OPTIONAL {${queryBestuurseenheid}}`;
 
     // TODO: remove with query below after Bestuursorgaan has been moved to Zitting iso BehandelingVanAgendapunt
     const endpoint = this.getAttribute('sparql-endpoint')
