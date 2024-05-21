@@ -89,7 +89,8 @@ class BesluitenLijst extends HTMLElement {
       queryThema = `
         SERVICE <https://stad.gent/sparql> { 
           ?concept a skos:Concept ;
-            skos:inScheme <${taxonomy}> .
+            skos:inScheme <${taxonomy}> ;
+            skos:prefLabel ?label .
           ${filterparams}
         }`;
     }
