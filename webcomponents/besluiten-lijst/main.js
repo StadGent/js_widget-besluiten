@@ -62,10 +62,7 @@ class BesluitenLijst extends HTMLElement {
     let filterparams = "";
     if (statussen) {
       const statussenArray = statussen.split(",");
-      // @todo: remove OPTIONAL {} when eenheden are available.
-      filterparams += "OPTIONAL {"
       filterparams += "VALUES ?status { " + statussenArray.map(status => `"${status.trim()}"@nl`).join(" ") + " }"
-      filterparams += "}"
     }
     if (bestuurseenheden) {
       // @todo: remove OPTIONAL {} when eenheden are available.
