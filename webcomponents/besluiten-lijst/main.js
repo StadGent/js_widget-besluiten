@@ -60,7 +60,7 @@ class BesluitenLijst extends HTMLElement {
     const bestuursorganen = this.getAttribute('bestuursorganen')
     let filterparams = "";
     if (bestuurseenheden) {
-      const bestuurseenhedenArray = bestuursorganen.split(" ");
+      const bestuurseenhedenArray = bestuurseenheden.split(" ");
       filterparams += "VALUES ?bestuureenheidURI { " + bestuurseenhedenArray.map(bestuurseenheid => `<${bestuurseenheid.trim()}>`).join(" ") + " }"
     }
     if (bestuursorganen) {
