@@ -109,11 +109,11 @@ class BesluitenLijst extends HTMLElement {
           eli:title_short ?title ;
           prov:wasDerivedFrom ?url ;
           prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status ;
-        ${queryBestuurseenheid}
+        ${queryBestuursorgaan}
         ?bestuursorgaanURI skos:prefLabel ?orgaanLabel . 
         BIND(CONCAT(UCASE(SUBSTR(?orgaanLabel, 1, 1)), SUBSTR(?orgaanLabel, 2)) AS ?orgaan)
         ${filterparams}
-        ${queryBestuursorgaan}
+        ${queryBestuurseenheid}
       } ORDER BY DESC(?zitting_datum) LIMIT ${amount}
     `;
   }
