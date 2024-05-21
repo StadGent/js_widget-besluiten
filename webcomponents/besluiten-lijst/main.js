@@ -62,7 +62,7 @@ class BesluitenLijst extends HTMLElement {
     let filterparams = "";
     if (statussen) {
       const statussenArray = statussen.split(",");
-      filterparams += "VALUES ?status { " + statussenArray.map(status => `<${status.trim()}>`).join("@nl ") + " }"
+      filterparams += "VALUES ?status { " + statussenArray.map(status => `"${status.trim()}"@nl`).join(" ") + " }"
     }
     if (bestuurseenheden) {
       const bestuurseenhedenArray = bestuurseenheden.split(" ");
