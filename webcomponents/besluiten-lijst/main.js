@@ -86,7 +86,7 @@ class BesluitenLijst extends HTMLElement {
         besluit:geplandeStart ?zitting_datum ;
         besluit:isGehoudenDoor/mandaat:isTijdspecialisatieVan ?bestuursorgaanURI .`;
     let queryBestuurseenheid = `?bestuursorgaanURI besluit:bestuurt ?bestuureenheidURI.`;
-    let queryThema;
+    let queryThema = '';
     if (concepts) {
       queryThema = `
         SERVICE <https://stad.gent/sparql> { 
