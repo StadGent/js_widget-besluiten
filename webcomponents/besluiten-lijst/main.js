@@ -65,11 +65,8 @@ class BesluitenLijst extends HTMLElement {
       filterparams += "VALUES ?status { " + statussenArray.map(status => `"${status.trim()}"@nl`).join(" ") + " }"
     }
     if (bestuurseenheden) {
-      // @todo: remove OPTIONAL {} when eenheden are available.
       const bestuurseenhedenArray = bestuurseenheden.split(" ");
-      filterparams += "OPTIONAL {"
       filterparams += "VALUES ?bestuureenheidURI { " + bestuurseenhedenArray.map(bestuurseenheid => `<${bestuurseenheid.trim()}>`).join(" ") + " }"
-      filterparams += "}"
     }
     if (bestuursorganen) {
       const bestuursorganenArray = bestuursorganen.split(" ");
@@ -83,6 +80,9 @@ class BesluitenLijst extends HTMLElement {
         besluit:geplandeStart ?zitting_datum ;
         besluit:isGehoudenDoor/mandaat:isTijdspecialisatieVan ?bestuursorgaanURI .`;
     let queryBestuurseenheid = `?bestuursorgaanURI besluit:bestuurt ?bestuureenheidURI.`;
+
+    // @todo: remove OPTIONAL {} when eenheden are available.
+    queryBestuurseenheid = "OPTIONAL {${queryBestuurseenheid}}";
 
     // TODO: remove with query below after Bestuursorgaan has been moved to Zitting iso BehandelingVanAgendapunt
     const endpoint = this.getAttribute('sparql-endpoint')
