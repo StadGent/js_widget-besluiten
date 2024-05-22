@@ -85,14 +85,16 @@ class BesluitenLijst extends HTMLElement {
     let queryThema = '';
     if (concepts) {
       const conceptsArray = concepts.split(" ");
-      filterparams += "VALUES ?concept { " + conceptsArray.map(concept => `<${concept.trim()}>`).join(" ") + " }"
       queryThema = `
-        SERVICE <https://stad.gent/sparql> { 
-          ?concept a skos:Concept ;
-            skos:inScheme <${taxonomy}> ;
-            skos:prefLabel ?label .
-          ${filterparams}
-        }`;
+        ?besluit ext:hasAnnotation ?annotation .
+        ?annotation ext:withTaxonomy ?thema ;
+                             ext:creationDate ?date ;
+                             ext:hasLabel ?label .
+        ?label ext:isTaxonomy ?concept .
+        VALUES ?thema { <${taxonomy}> }
+        VALUES ?concept { ` + conceptsArray.map(concept => `<${concept.trim()}>`).join(" ") + ` }
+        FILTER (!CONTAINS(STR(?url), "/notulen"))
+      `;
     }
 
     // @todo: remove OPTIONAL {} when eenheden are available.
@@ -117,15 +119,20 @@ class BesluitenLijst extends HTMLElement {
       PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
       PREFIX mandaat: <http://data.vlaanderen.be/ns/mandaat#>
+      PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
 
-      SELECT DISTINCT ?besluit ?title ?agendapunt ?zitting ?zitting_datum ?orgaan ?url ?status WHERE {
+      SELECT
+        DISTINCT ?besluit ?title ?agendapunt ?zitting ?zitting_datum ?orgaan ?url ?status
+        FROM <http://mu.semte.ch/graphs/public>
+        FROM <http://mu.semte.ch/application/probe/user-annotations>
+      WHERE {
         ?besluit a besluit:Besluit ;
           eli:title_short ?title ;
           prov:wasDerivedFrom ?url ;
           prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status ;
-        ${queryThema}
         ${queryBestuursorgaan}
         ?bestuursorgaanURI skos:prefLabel ?orgaanLabel . 
+        ${queryThema}
         ${filterparams}
         BIND(CONCAT(UCASE(SUBSTR(?orgaanLabel, 1, 1)), SUBSTR(?orgaanLabel, 2)) AS ?orgaan)
         ${queryBestuurseenheid}
