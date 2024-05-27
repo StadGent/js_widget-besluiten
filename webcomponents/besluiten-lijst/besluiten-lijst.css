@@ -86,10 +86,10 @@ reglementen-lijst {
   .reglementen-list .button {
     margin: 0 0 60px 0;
   }
-}
 
-.pager {
-  justify-content: center;
+  .pager {
+    justify-content: center;
+  }
 }
 
 .pager ul .next,
