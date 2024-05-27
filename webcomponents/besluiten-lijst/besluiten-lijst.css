@@ -88,6 +88,10 @@ reglementen-lijst {
   }
 }
 
+.pager {
+  justify-content: center;
+}
+
 .pager ul .next,
 .pager ul .previous {
   display: initial!important;
