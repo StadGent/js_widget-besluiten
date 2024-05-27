@@ -87,3 +87,7 @@ reglementen-lijst {
     margin: 0 0 60px 0;
   }
 }
+
+.pager ul .next,.pager ul .previous {
+  display: inherit;
+}
