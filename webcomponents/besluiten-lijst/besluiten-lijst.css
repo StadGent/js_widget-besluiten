@@ -90,5 +90,5 @@ reglementen-lijst {
 
 .pager ul .next,
 .pager ul .previous {
-  display: initial;
+  display: initial!important;
 }
