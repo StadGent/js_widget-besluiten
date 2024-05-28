@@ -193,11 +193,8 @@ class BesluitenLijst extends HTMLElement {
         ?besluit a besluit:Besluit ;
           eli:title_short ?title ;
           prov:wasDerivedFrom ?url ;
+          prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?statusLabel ;
         ${queryBestuursorgaan}
-        
-        OPTIONAL {
-          ?besluit prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?statusLabel .
-        }
         
         ?bestuursorgaanURI skos:prefLabel ?orgaanLabel . 
         ${queryThema}
