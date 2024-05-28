@@ -2,6 +2,10 @@ class BesluitenLijst extends HTMLElement {
 
   constructor() {
     super();
+    this.amount = parseInt(this.getAttribute('aantal')) || 10;
+    this.pager = this.getAttribute('pager') !== null;
+    this.offset = 0;
+    this.maxCount = 1000;
   }
 
   connectedCallback() {
@@ -9,7 +13,6 @@ class BesluitenLijst extends HTMLElement {
   }
 
   createDetail(besluit) {
-    console.log(besluit);
     return `
       <besluiten-detail
         titel="${besluit.title.value}"
@@ -22,40 +25,73 @@ class BesluitenLijst extends HTMLElement {
   }
 
   renderResults(besluiten) {
-    const template = this.getTemplate();
-    const shadowRoot = this.attachShadow({mode: 'open'}).appendChild(
-      template.cloneNode(true)
-    );
+    if (!this.shadowRoot) {  // Only attach a shadow root if one does not exist
+      const template = this.getTemplate();
+      this.attachShadow({mode: 'open'}).appendChild(
+          template.cloneNode(true)
+      );
+    }
 
     let list = "";
     besluiten.forEach(besluit => {
       list += this.createDetail(besluit)
     });
+
     this.shadowRoot.querySelectorAll(".js-resolutions-items")[0].innerHTML = list;
+
+    if (this.pager) {
+      this.shadowRoot.querySelectorAll(".pager")[0].innerHTML = this.getPager();
+
+      this.nextButton = this.shadowRoot.querySelector('#js-pager-next');
+      if (this.nextButton) {
+        this.nextButton.addEventListener('click', (event) => {
+          event.preventDefault();
+          this.pageUp();
+        });
+      }
+      this.previousButton = this.shadowRoot.querySelector('#js-pager-previous');
+      if (this.previousButton) {
+        this.previousButton.addEventListener('click', (event) => {
+          event.preventDefault();
+          this.pageDown();
+        });
+      }
+    }
   }
 
-  async getBesluiten() {
-    const endpoint = this.getAttribute('sparql-endpoint') + "?query=" + encodeURIComponent(this.constructQuery());
+  async executeQuery(query) {
+    const endpoint = this.getAttribute('sparql-endpoint') + "?query=" + encodeURIComponent(query);
     const response = await fetch(endpoint,
-      {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Accept': 'application/sparql-results+json'
-        }
-      });
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Accept': 'application/sparql-results+json'
+          }
+        });
 
     if (response.ok) {
       const json = await response.json();
-      //console.log(JSON.stringify(json.results.bindings));
-      this.renderResults(json.results.bindings);
+      return json;
     } else {
       console.log("Error when getting data.");
     }
   }
 
-  constructQuery() {
-    const amount = this.getAttribute('aantal');
+  async getBesluiten() {
+    let query = this.constructQuery();
+    if (this.pager) {
+      let count = await this.executeQuery(this.countQuery);
+      this.maxCount = count.results.bindings[0]['callret-0'].value;
+      console.log(this.maxCount);
+    }
 
+    let json = await this.executeQuery(this.selectQuery);
+    if (json) {
+      this.renderResults(json.results.bindings);
+    }
+  }
+
+  constructQuery() {
     const statussen = this.getAttribute('statussen');
     const bestuurseenheden = this.getAttribute('bestuurseenheden');
     const bestuursorganen = this.getAttribute('bestuursorganen');
@@ -94,15 +130,17 @@ class BesluitenLijst extends HTMLElement {
         VALUES ?thema { <${taxonomy}> }
         VALUES ?concept { ` + conceptsArray.map(concept => `<${concept.trim()}>`).join(" ") + ` }
         FILTER (!CONTAINS(STR(?url), "/notulen"))
+        FILTER (!CONTAINS(STR(?orgaan), "personeel"))
+        FILTER (!CONTAINS(STR(?orgaan), "gemeenteraad"))
       `;
     }
 
-    // @todo: remove OPTIONAL {} when eenheden are available.
+    // @TODO: remove OPTIONAL {} when eenheden are available.
     queryBestuurseenheid = `OPTIONAL {${queryBestuurseenheid}}`;
 
-    // TODO: remove with query below after Bestuursorgaan has been moved to Zitting iso BehandelingVanAgendapunt
+    // @TODO: remove with query below after Bestuursorgaan has been moved to Zitting iso BehandelingVanAgendapunt
     const endpoint = this.getAttribute('sparql-endpoint')
-    if (endpoint.includes("probe")) {
+    if (endpoint.includes("probesxcw")) {
       queryBestuursorgaan = `
         prov:wasGeneratedBy ?behandelingVanAgendapunt .
         ?behandelingVanAgendapunt dct:subject ?agendapunt .
@@ -112,6 +150,32 @@ class BesluitenLijst extends HTMLElement {
       `;
     }
 
+    let orderbyClause = 'ORDER BY DESC(?zitting_datum)';
+    let limitClause = `LIMIT ${this.amount}`;
+    let offsetClause = `OFFSET ${this.offset}`;
+
+    this.selectQuery = this.getQuery(
+        'DISTINCT ?besluit ?title ?agendapunt ?zitting ?zitting_datum ?orgaan ?url ?status',
+        queryBestuursorgaan,
+        queryThema,
+        filterparams,
+        queryBestuurseenheid,
+        orderbyClause,
+        limitClause,
+        offsetClause
+    );
+
+    this.countQuery = this.getQuery('COUNT(DISTINCT(?besluit))',
+        queryBestuursorgaan,
+        queryThema,
+        filterparams,
+        queryBestuurseenheid
+    );
+
+    return this.selectQuery;
+  }
+
+  getQuery(fields, queryBestuursorgaan, queryThema, filterparams, queryBestuurseenheid, orderbyClause='', limitClause='', offsetClause='') {
     return `
       PREFIX dct: <http://purl.org/dc/terms/>
       PREFIX prov: <http://www.w3.org/ns/prov#>
@@ -122,21 +186,29 @@ class BesluitenLijst extends HTMLElement {
       PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
 
       SELECT
-        DISTINCT ?besluit ?title ?agendapunt ?zitting ?zitting_datum ?orgaan ?url ?status
+        ${fields}
         FROM <http://mu.semte.ch/graphs/public>
         FROM <http://mu.semte.ch/application/probe/user-annotations>
       WHERE {
         ?besluit a besluit:Besluit ;
           eli:title_short ?title ;
           prov:wasDerivedFrom ?url ;
-          prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status ;
         ${queryBestuursorgaan}
+        
+        OPTIONAL {
+          ?besluit prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?statusLabel .
+        }
+        
         ?bestuursorgaanURI skos:prefLabel ?orgaanLabel . 
         ${queryThema}
         ${filterparams}
         BIND(CONCAT(UCASE(SUBSTR(?orgaanLabel, 1, 1)), SUBSTR(?orgaanLabel, 2)) AS ?orgaan)
         ${queryBestuurseenheid}
-      } ORDER BY DESC(?zitting_datum) LIMIT ${amount}
+        BIND(COALESCE(?statusLabel, "") AS ?status)
+      }
+      ${orderbyClause}
+      ${limitClause}
+      ${offsetClause}
     `;
   }
 
@@ -155,6 +227,8 @@ class BesluitenLijst extends HTMLElement {
               
               <div class="resolutions-list__items js-resolutions-items"></div>
               
+              <div class="pager"></div>
+              
               <slot name="raadpleegomgeving"><a href="https://ebesluitvorming.gent.be/" class="button button-primary">Alle besluiten van Stad Gent</a></slot>
             </div>
           </section>
@@ -167,6 +241,51 @@ class BesluitenLijst extends HTMLElement {
     }
 
     return document.getElementById("template-besluiten-lijst").content;
+  }
+
+  pageUp() {
+    this.offset += this.amount;
+    console.log(this.offset);
+    this.getBesluiten()
+  }
+
+  pageDown() {
+    if (this.offset >= this.amount) {
+      this.offset -= this.amount;
+      console.log(this.offset);
+      this.getBesluiten()
+    }
+  }
+
+  getPager() {
+    let previous = '';
+    let next = '';
+
+    if (this.offset >= this.amount) {
+      previous = `
+        <li class="previous" id="js-pager-previous"><a href="#" class="standalone-link back">
+            Vorige
+            <span class="visually-hidden">pagina</span></a></li>
+      `;
+    }
+
+    if (this.offset < this.maxCount - this.amount) {
+      next = `
+        <li class="next" id="js-pager-next"><a href="#" class="standalone-link">
+            Volgende
+            <span class="visually-hidden">pagina</span></a></li>
+      `;
+    }
+
+    return `
+    <nav class="pager" aria-labelledby="pagination">
+      <h2 id="pagination" class="visually-hidden">Paginatie</h2>
+      <ul class="pager__items">
+        ${previous}
+        ${next}
+      </ul>
+    </nav>
+    `;
   }
 }
 
