@@ -201,10 +201,10 @@ class BesluitenLijst extends HTMLElement {
         
         ?bestuursorgaanURI skos:prefLabel ?orgaanLabel . 
         ${queryThema}
+        ${queryBestuurseenheid}
         ${filterparams}
         BIND(CONCAT(UCASE(SUBSTR(?orgaanLabel, 1, 1)), SUBSTR(?orgaanLabel, 2)) AS ?orgaan)
-        ${queryBestuurseenheid}
-        BIND(COALESCE(?statusLabel, "") AS ?status)
+        BIND(COALESCE(?statusLabel, "Ontwerp") AS ?status)
       }
       ${orderbyClause}
       ${limitClause}

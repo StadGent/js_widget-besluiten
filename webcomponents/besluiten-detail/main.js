@@ -48,7 +48,7 @@ class BesluitenDetail extends HTMLElement {
     this.orgaan = '@todo';
     this.datum = this.formatDate(besluit.date.value)
     this.url = besluit.url.value;
-    this.status = besluit.status.value;
+    this.status = besluit.status.value || '';
     this.approved = besluit.status.value == 'Goedgekeurd';
     this.innerHTML += this.createDetail();
   }
