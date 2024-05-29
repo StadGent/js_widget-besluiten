@@ -63,9 +63,9 @@ class ReglementenLijst extends HTMLElement {
       filterparams += "VALUES ?bestuursorgaanURI { " + bestuursorganenArray.map(bestuursorgaan => `<${bestuursorgaan.trim()}>`).join(" ") + " }"
     }
 
-    let queryBestuursorgaan = `           
-        prov:wasGeneratedBy/dct:subject ?agendapunt .     
-    
+    let queryBestuursorgaan = `
+        prov:wasGeneratedBy/dct:subject ?agendapunt .
+
       ?zitting besluit:behandelt ?agendapunt ;
         besluit:isGehoudenDoor/mandaat:isTijdspecialisatieVan ?bestuursorgaanURI .`;
 
@@ -86,8 +86,8 @@ class ReglementenLijst extends HTMLElement {
       PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
       PREFIX mandaat: <http://data.vlaanderen.be/ns/mandaat#>
-      
-      SELECT ?besluit ?title ?publicatie_datum ?agendapunt ?zitting ?orgaan ?url ?status WHERE {
+
+      SELECT DISTINCT ?besluit ?title ?publicatie_datum ?agendapunt ?zitting ?orgaan ?url ?status WHERE {
         ?besluit a besluit:Besluit ;
           a <https://data.vlaanderen.be/id/concept/BesluitType/67378dd0-5413-474b-8996-d992ef81637a> ;
           eli:date_publication ?publicatie_datum ;
@@ -95,19 +95,19 @@ class ReglementenLijst extends HTMLElement {
           prov:wasDerivedFrom ?url ;
           prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status ;
           ${queryBestuursorgaan}
-        ?bestuursorgaanURI skos:prefLabel ?orgaan . 
+        ?bestuursorgaanURI skos:prefLabel ?orgaan .
         ${filterparams}
       } ORDER BY DESC(?publicatie_datum) LIMIT ${amount}`;
   }
 
   getTemplate() {
     const template = `
-      <template id="template-reglementen-lijst">    
+      <template id="template-reglementen-lijst">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Sans:400,600,700">
         <link rel="stylesheet" href="https://stijlgids.stad.gent/v6/css/styleguide.css">
         <link rel="stylesheet" href="https://stijlgids.stad.gent/v6/css/main.css">
         <link rel="stylesheet" href="https://stadgent.github.io/js_widget-besluiten/besluiten-lijst/besluiten-lijst.css">
-        
+
         <div class="reglementen-list cs--blue">
           <section class="highlight">
             <div class="highlight__inner">
