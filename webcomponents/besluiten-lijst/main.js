@@ -112,8 +112,8 @@ class BesluitenLijst extends HTMLElement {
     }
 
     let queryBestuursorgaan = `
-        prov:wasGeneratedBy/dct:subject ?agendapunt .     
-    
+        prov:wasGeneratedBy/dct:subject ?agendapunt .
+
       ?zitting besluit:behandelt ?agendapunt ;
         besluit:geplandeStart ?zitting_datum ;
         besluit:isGehoudenDoor/mandaat:isTijdspecialisatieVan ?bestuursorgaanURI .`;
@@ -140,7 +140,7 @@ class BesluitenLijst extends HTMLElement {
 
     // @TODO: remove with query below after Bestuursorgaan has been moved to Zitting iso BehandelingVanAgendapunt
     const endpoint = this.getAttribute('sparql-endpoint')
-    if (endpoint.includes("probesxcw")) {
+    if (endpoint.includes("probe")) {
       queryBestuursorgaan = `
         prov:wasGeneratedBy ?behandelingVanAgendapunt .
         ?behandelingVanAgendapunt dct:subject ?agendapunt .
@@ -195,8 +195,8 @@ class BesluitenLijst extends HTMLElement {
           prov:wasDerivedFrom ?url ;
           prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?statusLabel ;
         ${queryBestuursorgaan}
-        
-        ?bestuursorgaanURI skos:prefLabel ?orgaanLabel . 
+
+        ?bestuursorgaanURI skos:prefLabel ?orgaanLabel .
         ${queryThema}
         ${queryBestuurseenheid}
         ${filterparams}
@@ -216,16 +216,16 @@ class BesluitenLijst extends HTMLElement {
         <link rel="stylesheet" href="https://stijlgids.stad.gent/v6/css/styleguide.css">
         <link rel="stylesheet" href="https://stijlgids.stad.gent/v6/css/main.css">
         <link rel="stylesheet" href="https://stadgent.github.io/js_widget-besluiten/besluiten-lijst/besluiten-lijst.css">
-        
+
         <div class="resolutions-list cs--blue">
           <section class="highlight">
             <div class="highlight__inner">
               <slot name="title" class="h3">Recente besluiten</slot>
-              
+
               <div class="resolutions-list__items js-resolutions-items"></div>
-              
+
               <div class="pager"></div>
-              
+
               <slot name="raadpleegomgeving"><a href="https://ebesluitvorming.gent.be/" class="button button-primary">Alle besluiten van Stad Gent</a></slot>
             </div>
           </section>
