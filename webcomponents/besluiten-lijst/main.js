@@ -103,7 +103,7 @@ class BesluitenLijst extends HTMLElement {
       const statussenArray = statussen.split(",");
       filterparams += "VALUES ?status { " + statussenArray.map(status => `"${status.trim()}"@nl`).join(" ") + " }"
     } else {
-      filterparams += `BIND(COALESCE(?statusLabel, "Ontwerp") AS ?status)`;
+      filterparams += `BIND(COALESCE(?status, "Ontwerp") AS ?status)`;
     }
     if (bestuurseenheden) {
       const bestuurseenhedenArray = bestuurseenheden.split(" ");
@@ -194,7 +194,7 @@ class BesluitenLijst extends HTMLElement {
         ?besluit a besluit:Besluit ;
           eli:title_short ?title ;
           prov:wasDerivedFrom ?url ;
-          prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?statusLabel ;
+          prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status ;
         ${queryBestuursorgaan}
 
         ?bestuursorgaanURI skos:prefLabel ?orgaanLabel .
