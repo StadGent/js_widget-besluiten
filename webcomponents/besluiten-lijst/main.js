@@ -94,8 +94,6 @@ class BesluitenLijst extends HTMLElement {
 
   constructQuery() {
     const statussen = this.getAttribute('statussen');
-    const bestuurseenheden = this.getAttribute('bestuurseenheden');
-    const bestuursorganen = this.getAttribute('bestuursorganen');
     const taxonomy = this.getAttribute('taxonomy') || 'http://stad.gent/id/concepts/decision_making_themes';
     const concepts = this.getAttribute('concepts');
     let filterparams = "";

@@ -111,12 +111,7 @@ class ReglementenLijst extends HTMLElement {
   }
 
   constructQuery() {
-    const bestuursorganen = this.getAttribute('bestuursorganen')
     let filterparams = "";
-    if (bestuursorganen) {
-      const bestuursorganenArray = bestuursorganen.split(" ");
-      filterparams += "VALUES ?bestuursorgaanURI { " + bestuursorganenArray.map(bestuursorgaan => `<${bestuursorgaan.trim()}>`).join(" ") + " }"
-    }
 
     // Type filter.
     const types = this.getAttribute('types');
@@ -145,6 +140,20 @@ class ReglementenLijst extends HTMLElement {
         FILTER (!CONTAINS(STR(?orgaan), "personeel"))
         FILTER (!CONTAINS(STR(?orgaan), "gemeenteraad"))
       `;
+    }
+
+    // Bestuurseenheden filter.
+    const bestuurseenheden = this.getAttribute('bestuurseenheden');
+    if (bestuurseenheden) {
+      const bestuurseenhedenArray = bestuurseenheden.split(" ");
+      filterparams += "VALUES ?bestuureenheidURI { " + bestuurseenhedenArray.map(bestuurseenheid => `<${bestuurseenheid.trim()}>`).join(" ") + " }"
+    }
+
+    // Bestuursorganen filter.
+    const bestuursorganen = this.getAttribute('bestuursorganen');
+    if (bestuursorganen) {
+      const bestuursorganenArray = bestuursorganen.split(" ");
+      filterparams += "VALUES ?bestuursorgaanURI { " + bestuursorganenArray.map(bestuursorgaan => `<${bestuursorgaan.trim()}>`).join(" ") + " }"
     }
 
     let queryBestuursorgaan = `
@@ -183,6 +192,7 @@ class ReglementenLijst extends HTMLElement {
           prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status ;
           ${queryBestuursorgaan}
         ?bestuursorgaanURI skos:prefLabel ?orgaan .
+        OPTIONAL { ?bestuursorgaanURI besluit:bestuurt ?bestuureenheidURI . }
 
         ${queryThema}
         ${filterparams}
@@ -215,6 +225,7 @@ class ReglementenLijst extends HTMLElement {
           prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status ;
           ${queryBestuursorgaan}
         ?bestuursorgaanURI skos:prefLabel ?orgaan .
+        OPTIONAL { ?bestuursorgaanURI besluit:bestuurt ?bestuureenheidURI . }
 
         ${queryThema}
         ${filterparams}
