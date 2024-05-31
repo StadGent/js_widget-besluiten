@@ -119,6 +119,9 @@ class ReglementenLijst extends HTMLElement {
         VALUES ?type { ${Object.keys(ReglementenLijst.types).map((type) => `<${type}>`).join(" ")} }
 
         ${filterparams}
+        FILTER (!CONTAINS(STR(?url), "/notulen"))
+        FILTER (!CONTAINS(STR(?orgaan), "personeel"))
+        FILTER (!CONTAINS(STR(?orgaan), "gemeenteraad"))
       } ORDER BY DESC(?publicatie_datum) LIMIT ${amount}`;
   }
 
