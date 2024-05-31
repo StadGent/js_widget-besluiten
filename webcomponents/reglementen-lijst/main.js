@@ -21,6 +21,10 @@ class ReglementenLijst extends HTMLElement {
 
   constructor() {
     super();
+    this.amount = parseInt(this.getAttribute('aantal')) || 10;
+    this.pager = this.getAttribute('pager') !== null;
+    this.offset = 0;
+    this.maxCount = 1000;
   }
 
   connectedCallback() {
@@ -40,41 +44,73 @@ class ReglementenLijst extends HTMLElement {
   }
 
   renderResults(reglementen) {
-    const template = this.getTemplate();
-    //this.appendChild(template.cloneNode(true));
-    const shadowRoot =this.attachShadow({mode: 'open'}).appendChild(
-      template.cloneNode(true)
-    );
+    if (!this.shadowRoot) {  // Only attach a shadow root if one does not exist
+      const template = this.getTemplate();
+      this.attachShadow({mode: 'open'}).appendChild(
+          template.cloneNode(true)
+      );
+    }
 
     let list = "";
     reglementen.forEach(reglement => {
       list += this.createDetail(reglement)
     });
     this.shadowRoot.querySelectorAll(".js-reglementen-items")[0].innerHTML = list;
+
+    if (this.pager) {
+      this.shadowRoot.querySelectorAll(".pager")[0].innerHTML = this.getPager();
+
+      this.nextButton = this.shadowRoot.querySelector('#js-pager-next');
+      if (this.nextButton) {
+        this.nextButton.addEventListener('click', (event) => {
+          event.preventDefault();
+          this.pageUp();
+        });
+      }
+      this.previousButton = this.shadowRoot.querySelector('#js-pager-previous');
+      if (this.previousButton) {
+        this.previousButton.addEventListener('click', (event) => {
+          event.preventDefault();
+          this.pageDown();
+        });
+      }
+    }
   }
 
-  async getReglementen() {
-    const endpoint = this.getAttribute('sparql-endpoint') + "?query=" + encodeURIComponent(this.constructQuery());
+  async executeQuery(query) {
+    const endpoint = this.getAttribute('sparql-endpoint') + "?query=" + encodeURIComponent(query);
     const response = await fetch(endpoint,
-      {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Accept': 'application/sparql-results+json'
-        }
-      });
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Accept': 'application/sparql-results+json'
+          }
+        });
 
     if (response.ok) {
       const json = await response.json();
-      //console.log(JSON.stringify(json.results.bindings));
-      this.renderResults(json.results.bindings);
+      return json;
     } else {
       console.log("Error when getting data.");
+      console.log(query);
+    }
+  }
+
+  async getReglementen() {
+    let query = this.constructQuery();
+    if (this.pager) {
+      let count = await this.executeQuery(this.countQuery);
+      this.maxCount = count.results.bindings[0]['count'].value;
+      console.log(this.maxCount);
+    }
+
+    let json = await this.executeQuery(this.selectQuery);
+    if (json) {
+      this.renderResults(json.results.bindings);
     }
   }
 
   constructQuery() {
-    const amount = this.getAttribute('aantal');
-
     const bestuursorganen = this.getAttribute('bestuursorganen')
     let filterparams = "";
     if (bestuursorganen) {
@@ -107,7 +143,7 @@ class ReglementenLijst extends HTMLElement {
         ?zitting besluit:behandelt ?agendapunt .`;
     }
 
-    return `
+    this.selectQuery = `
       PREFIX dct: <http://purl.org/dc/terms/>
       PREFIX prov: <http://www.w3.org/ns/prov#>
       PREFIX eli: <http://data.europa.eu/eli/ontology#>
@@ -115,7 +151,9 @@ class ReglementenLijst extends HTMLElement {
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
       PREFIX mandaat: <http://data.vlaanderen.be/ns/mandaat#>
 
-      SELECT DISTINCT ?besluit ?title ?publicatie_datum ?agendapunt ?zitting ?orgaan ?url ?status ?type WHERE {
+      SELECT 
+        DISTINCT ?besluit ?title ?publicatie_datum ?agendapunt ?zitting ?orgaan ?url ?status ?type 
+      WHERE {
         ?besluit a besluit:Besluit ;
           a ?type ;
           eli:date_publication ?publicatie_datum ;
@@ -129,7 +167,39 @@ class ReglementenLijst extends HTMLElement {
         FILTER (!CONTAINS(STR(?url), "/notulen"))
         FILTER (!CONTAINS(STR(?orgaan), "personeel"))
         FILTER (!CONTAINS(STR(?orgaan), "gemeenteraad"))
-      } ORDER BY DESC(?publicatie_datum) LIMIT ${amount}`;
+      }
+      ORDER BY DESC(?publicatie_datum)
+      LIMIT ${this.amount}
+      OFFSET ${this.offset}
+      `;
+
+    this.countQuery = `
+      PREFIX dct: <http://purl.org/dc/terms/>
+      PREFIX prov: <http://www.w3.org/ns/prov#>
+      PREFIX eli: <http://data.europa.eu/eli/ontology#>
+      PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
+      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+      PREFIX mandaat: <http://data.vlaanderen.be/ns/mandaat#>
+
+      SELECT
+        (COUNT(DISTINCT(?besluit)) AS ?count) 
+      WHERE {
+        ?besluit a besluit:Besluit ;
+          a ?type ;
+          eli:date_publication ?publicatie_datum ;
+          eli:title_short ?title ;
+          prov:wasDerivedFrom ?url ;
+          prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status ;
+          ${queryBestuursorgaan}
+        ?bestuursorgaanURI skos:prefLabel ?orgaan .
+
+        ${filterparams}
+        FILTER (!CONTAINS(STR(?url), "/notulen"))
+        FILTER (!CONTAINS(STR(?orgaan), "personeel"))
+        FILTER (!CONTAINS(STR(?orgaan), "gemeenteraad"))
+      }`;
+
+    return this.selectQuery;
   }
 
   getTemplate() {
@@ -145,6 +215,7 @@ class ReglementenLijst extends HTMLElement {
             <div class="highlight__inner">
               <slot name="title">Recente reglementen</slot>
               <div class="reglementen-list__items js-reglementen-items"></div>
+              <div class="pager"></div>
               <slot name="raadpleegomgeving"><a href="https://ebesluitvorming.gent.be/" class="button button-primary">Alle reglementen van Stad Gent</a></slot>
             </div>
           </section>
@@ -157,6 +228,51 @@ class ReglementenLijst extends HTMLElement {
     }
 
     return document.getElementById("template-reglementen-lijst").content;
+  }
+
+  pageUp() {
+    this.offset += this.amount;
+    console.log(this.offset);
+    this.getReglementen()
+  }
+
+  pageDown() {
+    if (this.offset >= this.amount) {
+      this.offset -= this.amount;
+      console.log(this.offset);
+      this.getReglementen()
+    }
+  }
+
+  getPager() {
+    let previous = '';
+    let next = '';
+
+    if (this.offset >= this.amount) {
+      previous = `
+        <li class="previous" id="js-pager-previous"><a href="#" class="standalone-link back">
+            Vorige
+            <span class="visually-hidden">pagina</span></a></li>
+      `;
+    }
+
+    if (this.offset < this.maxCount - this.amount) {
+      next = `
+        <li class="next" id="js-pager-next"><a href="#" class="standalone-link">
+            Volgende
+            <span class="visually-hidden">pagina</span></a></li>
+      `;
+    }
+
+    return `
+    <nav class="pager" aria-labelledby="pagination">
+      <h2 id="pagination" class="visually-hidden">Paginatie</h2>
+      <ul class="pager__items">
+        ${previous}
+        ${next}
+      </ul>
+    </nav>
+    `;
   }
 }
 

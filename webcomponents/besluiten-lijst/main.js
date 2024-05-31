@@ -74,6 +74,7 @@ class BesluitenLijst extends HTMLElement {
       return json;
     } else {
       console.log("Error when getting data.");
+      console.log(query);
     }
   }
 
@@ -81,7 +82,7 @@ class BesluitenLijst extends HTMLElement {
     let query = this.constructQuery();
     if (this.pager) {
       let count = await this.executeQuery(this.countQuery);
-      this.maxCount = count.results.bindings[0]['callret-0'].value;
+      this.maxCount = count.results.bindings[0]['count'].value;
       console.log(this.maxCount);
     }
 
@@ -165,7 +166,7 @@ class BesluitenLijst extends HTMLElement {
         offsetClause
     );
 
-    this.countQuery = this.getQuery('COUNT(DISTINCT(?besluit))',
+    this.countQuery = this.getQuery('(COUNT(DISTINCT(?besluit)) AS ?count)',
         queryBestuursorgaan,
         queryThema,
         filterparams,
@@ -187,8 +188,6 @@ class BesluitenLijst extends HTMLElement {
 
       SELECT
         ${fields}
-        FROM <http://mu.semte.ch/graphs/public>
-        FROM <http://mu.semte.ch/application/probe/user-annotations>
       WHERE {
         ?besluit a besluit:Besluit ;
           eli:title_short ?title ;
