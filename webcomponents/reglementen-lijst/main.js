@@ -82,6 +82,15 @@ class ReglementenLijst extends HTMLElement {
       filterparams += "VALUES ?bestuursorgaanURI { " + bestuursorganenArray.map(bestuursorgaan => `<${bestuursorgaan.trim()}>`).join(" ") + " }"
     }
 
+    // Type filter.
+    const types = this.getAttribute('types');
+    if (types) {
+      const typesArray = types.split(" ");
+      filterparams += "VALUES ?type { " + typesArray.map(type => `<${type.trim()}>`).join(" ") + " }"
+    } else {
+      filterparams += `VALUES ?type { ${Object.keys(ReglementenLijst.types).map((type) => `<${type}>`).join(" ")} }`;
+    }
+
     let queryBestuursorgaan = `
         prov:wasGeneratedBy/dct:subject ?agendapunt .
 
@@ -115,8 +124,6 @@ class ReglementenLijst extends HTMLElement {
           prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status ;
           ${queryBestuursorgaan}
         ?bestuursorgaanURI skos:prefLabel ?orgaan .
-
-        VALUES ?type { ${Object.keys(ReglementenLijst.types).map((type) => `<${type}>`).join(" ")} }
 
         ${filterparams}
         FILTER (!CONTAINS(STR(?url), "/notulen"))
