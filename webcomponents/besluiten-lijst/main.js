@@ -102,6 +102,8 @@ class BesluitenLijst extends HTMLElement {
     if (statussen) {
       const statussenArray = statussen.split(",");
       filterparams += "VALUES ?status { " + statussenArray.map(status => `"${status.trim()}"@nl`).join(" ") + " }"
+    } else {
+      filterparams += `BIND(COALESCE(?statusLabel, "Ontwerp") AS ?status)`;
     }
     if (bestuurseenheden) {
       const bestuurseenhedenArray = bestuurseenheden.split(" ");
@@ -200,7 +202,6 @@ class BesluitenLijst extends HTMLElement {
         ${queryBestuurseenheid}
         ${filterparams}
         BIND(CONCAT(UCASE(SUBSTR(?orgaanLabel, 1, 1)), SUBSTR(?orgaanLabel, 2)) AS ?orgaan)
-        BIND(COALESCE(?statusLabel, "Ontwerp") AS ?status)
       }
       ${orderbyClause}
       ${limitClause}
