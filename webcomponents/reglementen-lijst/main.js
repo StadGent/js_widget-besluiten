@@ -127,6 +127,26 @@ class ReglementenLijst extends HTMLElement {
       filterparams += `VALUES ?type { ${Object.keys(ReglementenLijst.types).map((type) => `<${type}>`).join(" ")} }`;
     }
 
+    // Taxonomy filter.
+    let queryThema = '';
+    const taxonomy = this.getAttribute('taxonomy') || 'http://stad.gent/id/concepts/decision_making_themes';
+    const concepts = this.getAttribute('concepts');
+    if (concepts) {
+      const conceptsArray = concepts.split(" ");
+      queryThema = `
+        ?besluit ext:hasAnnotation ?annotation .
+        ?annotation ext:withTaxonomy ?thema ;
+                             ext:creationDate ?date ;
+                             ext:hasLabel ?label .
+        ?label ext:isTaxonomy ?concept .
+        VALUES ?thema { <${taxonomy}> }
+        VALUES ?concept { ` + conceptsArray.map(concept => `<${concept.trim()}>`).join(" ") + ` }
+        FILTER (!CONTAINS(STR(?url), "/notulen"))
+        FILTER (!CONTAINS(STR(?orgaan), "personeel"))
+        FILTER (!CONTAINS(STR(?orgaan), "gemeenteraad"))
+      `;
+    }
+
     let queryBestuursorgaan = `
         prov:wasGeneratedBy/dct:subject ?agendapunt .
 
@@ -150,6 +170,7 @@ class ReglementenLijst extends HTMLElement {
       PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
       PREFIX mandaat: <http://data.vlaanderen.be/ns/mandaat#>
+      PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
 
       SELECT 
         DISTINCT ?besluit ?title ?publicatie_datum ?agendapunt ?zitting ?orgaan ?url ?status ?type 
@@ -163,6 +184,7 @@ class ReglementenLijst extends HTMLElement {
           ${queryBestuursorgaan}
         ?bestuursorgaanURI skos:prefLabel ?orgaan .
 
+        ${queryThema}
         ${filterparams}
         FILTER (!CONTAINS(STR(?url), "/notulen"))
         FILTER (!CONTAINS(STR(?orgaan), "personeel"))
@@ -180,6 +202,7 @@ class ReglementenLijst extends HTMLElement {
       PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
       PREFIX mandaat: <http://data.vlaanderen.be/ns/mandaat#>
+      PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
 
       SELECT
         (COUNT(DISTINCT(?besluit)) AS ?count) 
@@ -193,6 +216,7 @@ class ReglementenLijst extends HTMLElement {
           ${queryBestuursorgaan}
         ?bestuursorgaanURI skos:prefLabel ?orgaan .
 
+        ${queryThema}
         ${filterparams}
         FILTER (!CONTAINS(STR(?url), "/notulen"))
         FILTER (!CONTAINS(STR(?orgaan), "personeel"))
