@@ -33,8 +33,10 @@ class ReglementenDetail extends HTMLElement {
           <dd>${this.orgaan}</dd>
           <dt>Datum van bekendmaking:</dt>
           <dd>${this.datum}</dd>
+          <dt>Type:</dt>
+          <dd>${this.type}</dd>
         </dl>
-        <span class="resolutions-detail__status" >${this.type} type</span>
+        <span class="resolutions-detail__status">Reglement</span>
       </div>
     `);
   }
