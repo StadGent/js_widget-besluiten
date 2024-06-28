@@ -36,7 +36,7 @@ class ReglementenDetail extends HTMLElement {
           <dt>Type:</dt>
           <dd>${this.type}</dd>
         </dl>
-        <span class="resolutions-detail__status">Reglement</span>
+        <span class="resolutions-detail__status">&nbsp;</span>
       </div>
     `);
   }
