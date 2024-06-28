@@ -24,7 +24,7 @@ class ReglementenDetail extends HTMLElement {
       <link rel="stylesheet" href="https://stijlgids.stad.gent/v6/css/main.css">
       <link rel="stylesheet" href="https://stadgent.github.io/js_widget-besluiten/besluiten-detail/besluiten-detail.css">
       
-      <div class="reglementen-detail">
+      <div class="reglementen-detail teaser">
         <div class="reglementen-detail__title">
           <a href="${this.url}" class="resolutions-detail__link">${this.titel}</a>
         </div>
@@ -37,6 +37,7 @@ class ReglementenDetail extends HTMLElement {
           <dd>${this.type}</dd>
         </dl>
         <span class="resolutions-detail__status">&nbsp;</span>
+        <a href="${this.url}" class="teaser-overlay-link" tabindex="-1" aria-hidden="true">${this.titel}</a>
       </div>
     `);
   }
