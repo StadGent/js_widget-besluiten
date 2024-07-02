@@ -295,6 +295,8 @@ class ReglementenLijst extends HTMLElement {
   getPager() {
     let previous = '';
     let next = '';
+    let currentPage = Math.floor(this.offset / this.amount) + 1;
+    let totalPages = Math.ceil(this.maxCount / this.amount);
 
     if (this.offset >= this.amount) {
       previous = `
@@ -317,6 +319,7 @@ class ReglementenLijst extends HTMLElement {
       <h2 id="pagination" class="visually-hidden">Paginatie</h2>
       <ul class="pager__items">
         ${previous}
+        <li class="current-page">Pagina ${currentPage} van ${totalPages}</li>
         ${next}
       </ul>
     </nav>
