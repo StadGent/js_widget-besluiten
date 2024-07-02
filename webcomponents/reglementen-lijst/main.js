@@ -167,9 +167,11 @@ class ReglementenLijst extends HTMLElement {
     if (endpoint.includes("probe")) {
       queryBestuursorgaan = `
         prov:wasGeneratedBy ?behandelingVanAgendapunt .
-        ?behandelingVanAgendapunt dct:subject ?agendapunt ;
-          besluit:isGehoudenDoor/mandaat:isTijdspecialisatieVan ?bestuursorgaanURI .
-        ?zitting besluit:behandelt ?agendapunt .`;
+        ?behandelingVanAgendapunt dct:subject ?agendapunt .
+        ?agendapunt ^besluit:behandelt ?zitting .
+        ?zitting besluit:isGehoudenDoor ?bestuursorgaanURI ;
+          besluit:geplandeStart ?zitting_datum.
+        `;
     }
 
     this.selectQuery = `
