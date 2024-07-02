@@ -114,6 +114,18 @@ class BesluitenLijst extends HTMLElement {
       filterparams += "VALUES ?bestuursorgaanURI { " + bestuursorganenArray.map(bestuursorgaan => `<${bestuursorgaan.trim()}>`).join(" ") + " }"
     }
 
+    // Date filter.
+    const startdate = this.getAttribute('start');
+    const enddate = this.getAttribute('eind');
+    if (startdate && enddate) {
+      filterparams += `FILTER(?zitting_datum >= "${startdate}"^^xsd:date && ?zitting_datum <= "${enddate}"^^xsd:date)`;
+      console.log(filterparams)
+    } else if (startdate) {
+      filterparams += `FILTER(?zitting_datum >= "${startdate}"^^xsd:date)`;
+    } else if (enddate) {
+      filterparams += `FILTER(?zitting_datum <= "${enddate}"^^xsd:date)`;
+    }
+
     let queryBestuursorgaan = `
         prov:wasGeneratedBy/dct:subject ?agendapunt .
 
