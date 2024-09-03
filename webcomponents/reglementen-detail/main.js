@@ -14,6 +14,10 @@ class ReglementenDetail extends HTMLElement {
       this.url = this.getAttribute('url');
       this.type = this.getAttribute('type');
       this.innerHTML += this.createDetail();
+      this.status = this.getAttribute('status');
+      this.status_green = ['Aanvaard tot de zitting als hoogdringend agendapunt', 'Goedgekeurd', 'Behandeld'].includes(this.getAttribute('status'));;
+      this.status_red = ['Afgekeurd', 'Afgevoerd', 'Geweigerd', 'Ingetrokken'].includes(this.getAttribute('status'));;
+      this.status_na = ['Gedeeltelijke ingetrokken', 'Verdaagd'].includes(this.getAttribute('status'));;
     }
   }
 
@@ -36,7 +40,7 @@ class ReglementenDetail extends HTMLElement {
           <dt>Type:</dt>
           <dd>${this.type}</dd>
         </dl>
-        <span class="resolutions-detail__status">&nbsp;</span>
+        <span class="resolutions-detail__status resolutions-detail__status--${this.status_green ? 'true' : this.status_red ? 'false' : 'void'}" >${this.status}</span>
         <a href="${this.url}" class="teaser-overlay-link" tabindex="-1" aria-hidden="true">${this.titel}</a>
       </div>
     `);
@@ -48,6 +52,7 @@ class ReglementenDetail extends HTMLElement {
     this.datum = this.formatDate(reglement.date.value)
     this.url = reglement.url.value;
     this.type = '@todo';
+    this.status = reglement.status.value || '';
     this.innerHTML += this.createDetail();
   }
 
@@ -88,10 +93,11 @@ class ReglementenDetail extends HTMLElement {
     PREFIX eli: <http://data.europa.eu/eli/ontology#>
     PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
     
-    SELECT ?title ?date ?url WHERE {
+    SELECT ?title ?date ?url ?status WHERE {
       <${uri}> a besluit:Besluit ;
         eli:date_publication ?date ;
         eli:title_short ?title ;
+        prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status ;
         prov:wasDerivedFrom ?url .
     } LIMIT 1`
   }
