@@ -13,11 +13,11 @@ class ReglementenDetail extends HTMLElement {
       this.datum = this.formatDate(this.getAttribute('datum'));
       this.url = this.getAttribute('url');
       this.type = this.getAttribute('type');
-      this.innerHTML += this.createDetail();
       this.status = this.getAttribute('status');
       this.status_green = ['Aanvaard tot de zitting als hoogdringend agendapunt', 'Goedgekeurd', 'Behandeld'].includes(this.getAttribute('status'));;
       this.status_red = ['Afgekeurd', 'Afgevoerd', 'Geweigerd', 'Ingetrokken'].includes(this.getAttribute('status'));;
       this.status_na = ['Gedeeltelijke ingetrokken', 'Verdaagd'].includes(this.getAttribute('status'));;
+      this.innerHTML += this.createDetail();
     }
   }
 
@@ -34,7 +34,7 @@ class ReglementenDetail extends HTMLElement {
         </div>
         <dl class="reglementen-detail__list">
           <dt>Orgaan:</dt>
-          <dd>${this.orgaan}</dd>
+          <dd>${this.status}</dd>
           <dt>Datum van bekendmaking:</dt>
           <dd>${this.datum}</dd>
           <dt>Type:</dt>
@@ -53,6 +53,7 @@ class ReglementenDetail extends HTMLElement {
     this.url = reglement.url.value;
     this.type = '@todo';
     this.status = reglement.status.value || '';
+    this.approved = reglement.status.value == 'Goedgekeurd';
     this.innerHTML += this.createDetail();
   }
 
