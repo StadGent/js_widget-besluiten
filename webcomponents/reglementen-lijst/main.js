@@ -39,6 +39,7 @@ class ReglementenLijst extends HTMLElement {
         datum="${reglement.publicatie_datum.value}"
         url="${reglement.url.value}"
         type="${ReglementenLijst.types[reglement.type.value]}"
+        status="${reglement.status.value}"
       ></reglementen-detail>
     `;
   }
@@ -112,6 +113,16 @@ class ReglementenLijst extends HTMLElement {
 
   constructQuery() {
     let filterparams = "";
+
+    // Status filter.
+    const statussen = this.getAttribute('statussen');
+    if (statussen) {
+      const statussenArray = statussen.split(",");
+      filterparams += "VALUES ?status { " + statussenArray.map(status => `"${status.trim()}"@nl`).join(" ") + " }"
+    } else {
+      filterparams += `BIND(COALESCE(?status, "Ontwerp") AS ?status)`;
+    }
+    console.log(statussen);
 
     // Type filter.
     const types = this.getAttribute('types');
