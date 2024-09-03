@@ -213,10 +213,10 @@ class ReglementenLijst extends HTMLElement {
           eli:date_publication ?publicatie_datum ;
           eli:title_short ?title ;
           prov:wasDerivedFrom ?url ;
-          prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status ;
           ${queryBestuursorgaan}
         ?bestuursorgaanURI skos:prefLabel ?orgaan .
         OPTIONAL { ?bestuursorgaanURI besluit:bestuurt ?bestuureenheidURI . }
+        OPTIONAL { ?besluit prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status }
 
         ${queryThema}
         ${filterparams}

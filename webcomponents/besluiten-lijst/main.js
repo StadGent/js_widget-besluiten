@@ -151,7 +151,10 @@ class BesluitenLijst extends HTMLElement {
     }
 
     // @TODO: remove OPTIONAL {} when eenheden are available.
-    queryBestuurseenheid = `OPTIONAL {${queryBestuurseenheid}}`;
+    let queryOptional = `OPTIONAL {${queryBestuurseenheid}}`;
+
+    // @TODO: remove OPTIONAL {} when statusses are available.
+    queryOptional += `OPTIONAL { ?besluit prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status }`;
 
     // @TODO: remove with query below after Bestuursorgaan has been moved to Zitting iso BehandelingVanAgendapunt
     const endpoint = this.getAttribute('sparql-endpoint')
@@ -174,7 +177,7 @@ class BesluitenLijst extends HTMLElement {
         queryBestuursorgaan,
         queryThema,
         filterparams,
-        queryBestuurseenheid,
+        queryOptional,
         orderbyClause,
         limitClause,
         offsetClause
@@ -184,13 +187,13 @@ class BesluitenLijst extends HTMLElement {
         queryBestuursorgaan,
         queryThema,
         filterparams,
-        queryBestuurseenheid
+        queryOptional
     );
 
     return this.selectQuery;
   }
 
-  getQuery(fields, queryBestuursorgaan, queryThema, filterparams, queryBestuurseenheid, orderbyClause='', limitClause='', offsetClause='') {
+  getQuery(fields, queryBestuursorgaan, queryThema, filterparams, optionalQuery, orderbyClause='', limitClause='', offsetClause='') {
     return `
       PREFIX dct: <http://purl.org/dc/terms/>
       PREFIX prov: <http://www.w3.org/ns/prov#>
@@ -206,12 +209,11 @@ class BesluitenLijst extends HTMLElement {
         ?besluit a besluit:Besluit ;
           eli:title_short ?title ;
           prov:wasDerivedFrom ?url ;
-          prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status ;
         ${queryBestuursorgaan}
 
         ?bestuursorgaanURI skos:prefLabel ?orgaanLabel .
         ${queryThema}
-        ${queryBestuurseenheid}
+        ${optionalQuery}
         ${filterparams}
         BIND(CONCAT(UCASE(SUBSTR(?orgaanLabel, 1, 1)), SUBSTR(?orgaanLabel, 2)) AS ?orgaan)
       }
