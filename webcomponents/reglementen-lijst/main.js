@@ -54,7 +54,7 @@ class ReglementenLijst extends HTMLElement {
         datum="${reglement.publicatie_datum.value}"
         url="${reglement.url.value}"
         type="${ReglementenLijst.types[reglement.type.value]}"
-        status="${reglement.status.value}"
+        status="${reglement.status?.value || ''}"
       ></reglementen-detail>
     `;
   }
@@ -312,7 +312,7 @@ class ReglementenLijst extends HTMLElement {
         <div class="reglementen-list cs--blue">
           <section class="highlight">
             <div class="highlight__inner">
-              <slot class='h3' name="title">Recente reglementen</slot>
+              <slot name="title" class="h3">Recente reglementen</slot>
               <div class="reglementen-list__items js-reglementen-items"></div>
               <div class="pager"></div>
               <slot name="raadpleegomgeving"><a href="https://ebesluitvorming.gent.be/" class="button button-primary">Alle reglementen van Stad Gent</a></slot>
