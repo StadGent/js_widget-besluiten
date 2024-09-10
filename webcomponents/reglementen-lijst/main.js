@@ -39,7 +39,7 @@ class ReglementenLijst extends HTMLElement {
         datum="${reglement.publicatie_datum.value}"
         url="${reglement.url.value}"
         type="${ReglementenLijst.types[reglement.type.value]}"
-        status="${reglement.status.value}"
+        status="${reglement.status?.value || ''}"
       ></reglementen-detail>
     `;
   }
