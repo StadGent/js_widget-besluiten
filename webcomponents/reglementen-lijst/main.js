@@ -272,7 +272,7 @@ class ReglementenLijst extends HTMLElement {
         <div class="reglementen-list cs--blue">
           <section class="highlight">
             <div class="highlight__inner">
-              <slot name="title">Recente reglementen</slot>
+              <slot name="title" class="h3">Recente reglementen</slot>
               <div class="reglementen-list__items js-reglementen-items"></div>
               <div class="pager"></div>
               <slot name="raadpleegomgeving"><a href="https://ebesluitvorming.gent.be/" class="button button-primary">Alle reglementen van Stad Gent</a></slot>
