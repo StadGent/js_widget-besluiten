@@ -39,7 +39,7 @@ class ReglementenLijst extends HTMLElement {
         datum="${reglement.publicatie_datum.value}"
         url="${reglement.url.value}"
         type="${ReglementenLijst.types[reglement.type.value]}"
-        status="${reglement.status.value}"
+        status="${besluit.status?.value || ''}"
       ></reglementen-detail>
     `;
   }
@@ -205,8 +205,8 @@ class ReglementenLijst extends HTMLElement {
       PREFIX mandaat: <http://data.vlaanderen.be/ns/mandaat#>
       PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
 
-      SELECT 
-        DISTINCT ?besluit ?title ?publicatie_datum ?agendapunt ?zitting ?orgaan ?url ?status ?type 
+      SELECT
+        DISTINCT ?besluit ?title ?publicatie_datum ?agendapunt ?zitting ?orgaan ?url ?status ?type
       WHERE {
         ?besluit a besluit:Besluit ;
           a ?type ;
@@ -239,7 +239,7 @@ class ReglementenLijst extends HTMLElement {
       PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
 
       SELECT
-        (COUNT(DISTINCT(?besluit)) AS ?count) 
+        (COUNT(DISTINCT(?besluit)) AS ?count)
       WHERE {
         ?besluit a besluit:Besluit ;
           a ?type ;

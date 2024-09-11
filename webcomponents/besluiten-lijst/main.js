@@ -19,7 +19,7 @@ class BesluitenLijst extends HTMLElement {
         orgaan="${besluit.orgaan.value}"
         datum="${besluit.zitting_datum.value}"
         url="${besluit.url.value}"
-        status="${besluit.status.value}"
+        status="${besluit.status?.value || ''}"
       ></besluiten-detail>
     `;
   }
