@@ -173,7 +173,7 @@ class BesluitenLijst extends HTMLElement {
     let offsetClause = `OFFSET ${this.offset}`;
 
     this.selectQuery = this.getQuery(
-        'DISTINCT ?besluit ?title ?agendapunt ?zitting ?zitting_datum ?orgaan ?url ?status',
+        'DISTINCT ?besluit ?title ?agendapunt ?zitting_datum ?orgaan ?url ?status',
         queryBestuursorgaan,
         queryThema,
         filterparams,

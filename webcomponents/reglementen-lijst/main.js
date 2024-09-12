@@ -246,7 +246,7 @@ class ReglementenLijst extends HTMLElement {
       PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
 
       SELECT
-        DISTINCT ?besluit ?title ?publicatie_datum ?agendapunt ?zitting ?orgaan ?url ?status ?type
+        DISTINCT ?besluit ?title ?publicatie_datum ?agendapunt ?orgaan ?url ?status ?type
       WHERE {
         ?besluit a besluit:Besluit ;
           a ?type ;
