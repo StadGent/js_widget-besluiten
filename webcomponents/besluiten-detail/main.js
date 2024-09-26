@@ -13,9 +13,30 @@ class BesluitenDetail extends HTMLElement {
       this.datum = this.formatDate(this.getAttribute('datum'));
       this.url = this.getAttribute('url');
       this.status = this.getAttribute('status');
-      this.status_green = ['Aanvaard tot de zitting als hoogdringend agendapunt', 'Goedgekeurd', 'Behandeld'].includes(this.getAttribute('status'));;
-      this.status_red = ['Afgekeurd', 'Afgevoerd', 'Geweigerd', 'Ingetrokken'].includes(this.getAttribute('status'));;
-      this.status_na = ['Gedeeltelijke ingetrokken', 'Verdaagd'].includes(this.getAttribute('status'));;
+      switch(this.status) {
+        case 'Aanvaard tot de zitting als hoogdringend agendapunt':
+        case 'Goedgekeurd':
+        case 'Behandeld':
+          this.status_color = 'true';
+          break;
+        case 'Afgekeurd':
+        case 'Afgevoerd':
+        case 'Geweigerd':
+        case 'Ingetrokken':
+          this.status_color = 'false';
+          break;
+        case 'Gedeeltelijk ingetrokken':
+        case 'Verdaagd':
+          this.status_color = 'void';
+          break;
+        case '':
+          this.status_color = 'void';
+          this.status = 'Onbekend';
+          break;
+      default:
+          this.status_color = 'void';
+          break;
+      }
       this.innerHTML += this.createDetail();
     }
   }
@@ -37,7 +58,7 @@ class BesluitenDetail extends HTMLElement {
             <dt>Datum van de zitting:</dt>
             <dd>${this.datum}</dd>
           </dl>
-          <span class="resolutions-detail__status resolutions-detail__status--${this.status_green ? 'true' : this.status_red ? 'false' : 'void'}" >${this.status}</span>
+          <span class="resolutions-detail__status resolutions-detail__status--${this.status_color}" >${this.status}</span>
         </div>
         <a href="${this.url}" class="teaser-overlay-link" tabindex="-1" aria-hidden="true">${this.titel}</a>
       </div>
@@ -47,7 +68,7 @@ class BesluitenDetail extends HTMLElement {
   renderResults(besluit) {
     this.titel = besluit.title.value;
     this.orgaan = '@todo';
-    this.datum = this.formatDate(besluit.date.value)
+    this.datum = this.formatDate(besluit.date.value);
     this.url = besluit.url.value;
     this.status = besluit.status.value || '';
     this.approved = besluit.status.value == 'Goedgekeurd';

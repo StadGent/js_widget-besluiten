@@ -34,7 +34,7 @@ class BesluitenLijst extends HTMLElement {
 
     let list = "";
     besluiten.forEach(besluit => {
-      list += this.createDetail(besluit)
+      list += this.createDetail(besluit);
     });
 
     this.shadowRoot.querySelectorAll(".js-resolutions-items")[0].innerHTML = list;
@@ -101,17 +101,21 @@ class BesluitenLijst extends HTMLElement {
     let filterparams = "";
     if (statussen) {
       const statussenArray = statussen.split(",");
-      filterparams += "VALUES ?status { " + statussenArray.map(status => `"${status.trim()}"@nl`).join(" ") + " }"
+      // NOTE: adding query part here, status is not optional when filtering on status
+      filterparams +=  `?besluit prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status. \n`;
+      filterparams += "VALUES ?status { " + statussenArray.map(status => `"${status.trim()}"@nl`).join(" ") + " }";
     } else {
-      filterparams += `BIND(COALESCE(?status, "Ontwerp") AS ?status)`;
+      // TODO: adding query part here, status is ONLY optional when not filtering on status
+      filterparams +=  `OPTIONAL { ?besluit prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status }`;
+      filterparams += `BIND(COALESCE(?status, "Onbekend"@nl) AS ?status)`;
     }
     if (bestuurseenheden) {
       const bestuurseenhedenArray = bestuurseenheden.split(" ");
-      filterparams += "VALUES ?bestuureenheidURI { " + bestuurseenhedenArray.map(bestuurseenheid => `<${bestuurseenheid.trim()}>`).join(" ") + " }"
+      filterparams += "VALUES ?bestuureenheidURI { " + bestuurseenhedenArray.map(bestuurseenheid => `<${bestuurseenheid.trim()}>`).join(" ") + " }";
     }
     if (bestuursorganen) {
       const bestuursorganenArray = bestuursorganen.split(" ");
-      filterparams += "VALUES ?bestuursorgaanURI { " + bestuursorganenArray.map(bestuursorgaan => `<${bestuursorgaan.trim()}>`).join(" ") + " }"
+      filterparams += "VALUES ?bestuursorgaanURI { " + bestuursorganenArray.map(bestuursorgaan => `<${bestuursorgaan.trim()}>`).join(" ") + " }";
     }
 
     // Date filter.
@@ -119,7 +123,6 @@ class BesluitenLijst extends HTMLElement {
     const enddate = this.getAttribute('eind');
     if (startdate && enddate) {
       filterparams += `FILTER(?zitting_datum >= "${startdate}"^^xsd:date && ?zitting_datum <= "${enddate}"^^xsd:date)`;
-      console.log(filterparams)
     } else if (startdate) {
       filterparams += `FILTER(?zitting_datum >= "${startdate}"^^xsd:date)`;
     } else if (enddate) {
@@ -153,11 +156,9 @@ class BesluitenLijst extends HTMLElement {
     // @TODO: remove OPTIONAL {} when eenheden are available.
     let queryOptional = `OPTIONAL {${queryBestuurseenheid}}`;
 
-    // @TODO: remove OPTIONAL {} when statusses are available.
-    queryOptional += `OPTIONAL { ?besluit prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status }`;
 
     // @TODO: remove with query below after Bestuursorgaan has been moved to Zitting iso BehandelingVanAgendapunt
-    const endpoint = this.getAttribute('sparql-endpoint')
+    const endpoint = this.getAttribute('sparql-endpoint');
     if (endpoint.includes("probe")) {
       queryBestuursorgaan = `
         prov:wasGeneratedBy ?behandelingVanAgendapunt .
@@ -257,14 +258,14 @@ class BesluitenLijst extends HTMLElement {
   pageUp() {
     this.offset += this.amount;
     console.log(this.offset);
-    this.getBesluiten()
+    this.getBesluiten();
   }
 
   pageDown() {
     if (this.offset >= this.amount) {
       this.offset -= this.amount;
       console.log(this.offset);
-      this.getBesluiten()
+      this.getBesluiten();
     }
   }
 
