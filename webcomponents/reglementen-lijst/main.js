@@ -78,17 +78,19 @@ class ReglementenLijst extends HTMLElement {
 
       this.nextButton = this.shadowRoot.querySelector("#js-pager-next");
       if (this.nextButton) {
-        this.nextButton.addEventListener("click", (event) => {
+        // FIX: use onclick instead of addEventListener to avoid stacking listeners
+        this.nextButton.onclick = (event) => {
           event.preventDefault();
           this.pageUp();
-        });
+        };
       }
       this.previousButton = this.shadowRoot.querySelector("#js-pager-previous");
       if (this.previousButton) {
-        this.previousButton.addEventListener("click", (event) => {
+        // FIX: use onclick instead of addEventListener to avoid stacking listeners
+        this.previousButton.onclick = (event) => {
           event.preventDefault();
           this.pageDown();
-        });
+        };
       }
     }
   }
@@ -323,7 +325,10 @@ class ReglementenLijst extends HTMLElement {
     `;
 
     if (!document.getElementById("template-reglementen-lijst")) {
-      document.body.innerHTML += template;
+      // FIX: use appendChild instead of innerHTML += to avoid destroying existing DOM/shadow roots
+      const div = document.createElement("div");
+      div.innerHTML = template;
+      document.body.appendChild(div.firstElementChild);
     }
 
     return document.getElementById("template-reglementen-lijst").content;
