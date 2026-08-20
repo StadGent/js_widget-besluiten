@@ -185,6 +185,21 @@ class ReglementenLijst extends HTMLElement {
       `;
     }
 
+    // Wijken filter.
+    let queryWijken = "";
+    const wijken = this.getAttribute("wijken");
+    if (wijken) {
+      const wijkenArray = wijken.split(" ");
+      queryWijken =
+        `
+        ?wijkAnnotation oa:hasTarget ?besluit ;
+          oa:hasBody ?wijk .
+        VALUES ?wijk { ` +
+        wijkenArray.map((wijk) => `<${wijk.trim()}>`).join(" ") +
+        ` }
+      `;
+    }
+
     // Bestuurseenheden filter.
     const bestuurseenheden = this.getAttribute("bestuurseenheden");
     if (bestuurseenheden) {
@@ -246,6 +261,7 @@ class ReglementenLijst extends HTMLElement {
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
       PREFIX mandaat: <http://data.vlaanderen.be/ns/mandaat#>
       PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
+      PREFIX oa: <http://www.w3.org/ns/oa#>
 
       SELECT
         DISTINCT ?besluit ?title ?publicatie_datum ?agendapunt ?orgaan ?url ?status ?type
@@ -261,6 +277,7 @@ class ReglementenLijst extends HTMLElement {
         OPTIONAL { ?besluit prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status }
 
         ${queryThema}
+        ${queryWijken}
         ${filterparams}
         FILTER (REGEX(STR(?url), "/agendapunten/[0-9]"))
         FILTER (!CONTAINS(STR(?orgaan), "personeel"))
@@ -279,6 +296,7 @@ class ReglementenLijst extends HTMLElement {
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
       PREFIX mandaat: <http://data.vlaanderen.be/ns/mandaat#>
       PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
+      PREFIX oa: <http://www.w3.org/ns/oa#>
 
       SELECT
         (COUNT(DISTINCT(?besluit)) AS ?count)
@@ -294,6 +312,7 @@ class ReglementenLijst extends HTMLElement {
         OPTIONAL { ?bestuursorgaanURI besluit:bestuurt ?bestuureenheidURI . }
 
         ${queryThema}
+        ${queryWijken}
         ${filterparams}
         FILTER (REGEX(STR(?url), "/agendapunten/[0-9]"))
         FILTER (!CONTAINS(STR(?orgaan), "personeel"))

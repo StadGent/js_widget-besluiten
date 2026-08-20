@@ -100,6 +100,7 @@ class BesluitenLijst extends HTMLElement {
     const bestuursorganen = this.getAttribute('bestuursorganen');
     const taxonomy = this.getAttribute('taxonomy') || 'http://stad.gent/id/concepts/decision_making_themes';
     const concepts = this.getAttribute('concepts');
+    const wijken = this.getAttribute('wijken');
     let filterparams = "";
     if (statussen) {
       const statussenArray = statussen.split(",");
@@ -155,6 +156,16 @@ class BesluitenLijst extends HTMLElement {
       `;
     }
 
+    let queryWijken = '';
+    if (wijken) {
+      const wijkenArray = wijken.split(" ");
+      queryWijken = `
+        ?wijkAnnotation oa:hasTarget ?besluit ;
+          oa:hasBody ?wijk .
+        VALUES ?wijk { ` + wijkenArray.map(wijk => `<${wijk.trim()}>`).join(" ") + ` }
+      `;
+    }
+
     // @TODO: remove OPTIONAL {} when eenheden are available.
     let queryOptional = `OPTIONAL {${queryBestuurseenheid}}`;
 
@@ -179,6 +190,7 @@ class BesluitenLijst extends HTMLElement {
         'DISTINCT ?besluit ?title ?agendapunt ?zitting_datum ?orgaan ?url ?status',
         queryBestuursorgaan,
         queryThema,
+        queryWijken,
         filterparams,
         queryOptional,
         orderbyClause,
@@ -189,6 +201,7 @@ class BesluitenLijst extends HTMLElement {
     this.countQuery = this.getQuery('(COUNT(DISTINCT(?besluit)) AS ?count)',
         queryBestuursorgaan,
         queryThema,
+        queryWijken,
         filterparams,
         queryOptional
     );
@@ -196,7 +209,7 @@ class BesluitenLijst extends HTMLElement {
     return this.selectQuery;
   }
 
-  getQuery(fields, queryBestuursorgaan, queryThema, filterparams, optionalQuery, orderbyClause='', limitClause='', offsetClause='') {
+  getQuery(fields, queryBestuursorgaan, queryThema, queryWijken, filterparams, optionalQuery, orderbyClause='', limitClause='', offsetClause='') {
     return `
       PREFIX dct: <http://purl.org/dc/terms/>
       PREFIX prov: <http://www.w3.org/ns/prov#>
@@ -205,6 +218,7 @@ class BesluitenLijst extends HTMLElement {
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
       PREFIX mandaat: <http://data.vlaanderen.be/ns/mandaat#>
       PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
+      PREFIX oa: <http://www.w3.org/ns/oa#>
 
       SELECT
         ${fields}
@@ -216,6 +230,7 @@ class BesluitenLijst extends HTMLElement {
 
         ?bestuursorgaanURI skos:prefLabel ?orgaanLabel .
         ${queryThema}
+        ${queryWijken}
         ${optionalQuery}
         ${filterparams}
         BIND(CONCAT(UCASE(SUBSTR(?orgaanLabel, 1, 1)), SUBSTR(?orgaanLabel, 2)) AS ?orgaan)
