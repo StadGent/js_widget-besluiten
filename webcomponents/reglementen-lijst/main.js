@@ -192,7 +192,8 @@ class ReglementenLijst extends HTMLElement {
       const wijkenArray = wijken.split(" ");
       queryWijken =
         `
-        ?wijkAnnotation oa:hasTarget ?besluit ;
+        ?besluit gold:translation/eli:realizes ?work .
+        ?wijkAnnotation oa:hasTarget ?work ;
           oa:hasBody ?wijk .
         VALUES ?wijk { ` +
         wijkenArray.map((wijk) => `<${wijk.trim()}>`).join(" ") +
@@ -262,6 +263,7 @@ class ReglementenLijst extends HTMLElement {
       PREFIX mandaat: <http://data.vlaanderen.be/ns/mandaat#>
       PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
       PREFIX oa: <http://www.w3.org/ns/oa#>
+      PREFIX gold: <http://purl.org/linguistics/gold/>
 
       SELECT
         DISTINCT ?besluit ?title ?publicatie_datum ?agendapunt ?orgaan ?url ?status ?type
@@ -297,6 +299,7 @@ class ReglementenLijst extends HTMLElement {
       PREFIX mandaat: <http://data.vlaanderen.be/ns/mandaat#>
       PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
       PREFIX oa: <http://www.w3.org/ns/oa#>
+      PREFIX gold: <http://purl.org/linguistics/gold/>
 
       SELECT
         (COUNT(DISTINCT(?besluit)) AS ?count)
