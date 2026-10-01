@@ -9,7 +9,27 @@ class BesluitenLijst extends HTMLElement {
   }
 
   connectedCallback() {
+    this.ensureIconFont();
     this.getBesluiten();
+  }
+
+  // @font-face rules inside a shadow root are ignored, so the icon glyphs would be drawn with
+  // the host page's "gent-icons-v6", which is often another version with different codepoints.
+  // Register the styleguide's font under our own name on the document, limited to the private
+  // use area so text in pseudo-elements still falls back to Fira Sans.
+  ensureIconFont() {
+    if (document.getElementById('besluiten-widget-icon-font')) return;
+    const style = document.createElement('style');
+    style.id = 'besluiten-widget-icon-font';
+    style.textContent = `
+      @font-face {
+        font-family: "besluiten-widget-icons";
+        font-display: swap;
+        src: url("https://stijlgids.stad.gent/v6/styleguide/fonts/gent-icons-v6.woff2") format("woff2");
+        unicode-range: U+E000-F8FF;
+      }
+    `;
+    document.head.appendChild(style);
   }
 
   createDetail(besluit) {
@@ -250,6 +270,11 @@ class BesluitenLijst extends HTMLElement {
         <link rel="stylesheet" href="https://stijlgids.stad.gent/v6/css/styleguide.css">
         <link rel="stylesheet" href="https://stijlgids.stad.gent/v6/css/main.css">
         <link rel="stylesheet" href="https://stadgent.github.io/js_widget-besluiten/besluiten-lijst/besluiten-lijst.css">
+        <style>
+          *::before, *::after {
+            font-family: "besluiten-widget-icons", "Fira Sans", sans-serif !important;
+          }
+        </style>
 
         <div class="resolutions-list cs--blue">
           <section class="highlight">

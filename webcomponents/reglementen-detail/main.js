@@ -5,6 +5,7 @@ class ReglementenDetail extends HTMLElement {
   }
 
   connectedCallback() {
+    this.ensureIconFont();
     if (this.getAttribute('uri')) {
       this.getReglement(this.getAttribute('uri'));
     } else {
@@ -21,12 +22,34 @@ class ReglementenDetail extends HTMLElement {
     }
   }
 
+  // The host page may load another version of "gent-icons-v6" whose codepoints don't match the
+  // styleguide CSS used here, so register the styleguide's font under our own name.
+  ensureIconFont() {
+    if (document.getElementById('besluiten-widget-icon-font')) return;
+    const style = document.createElement('style');
+    style.id = 'besluiten-widget-icon-font';
+    style.textContent = `
+      @font-face {
+        font-family: "besluiten-widget-icons";
+        font-display: swap;
+        src: url("https://stijlgids.stad.gent/v6/styleguide/fonts/gent-icons-v6.woff2") format("woff2");
+        unicode-range: U+E000-F8FF;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
   createDetail() {
     return (`
       <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Sans:400,600,700">
       <link rel="stylesheet" href="https://stijlgids.stad.gent/v6/css/styleguide.css">
       <link rel="stylesheet" href="https://stijlgids.stad.gent/v6/css/main.css">
       <link rel="stylesheet" href="https://stadgent.github.io/js_widget-besluiten/besluiten-detail/besluiten-detail.css">
+      <style>
+        reglementen-detail *::before, reglementen-detail *::after {
+          font-family: "besluiten-widget-icons", "Fira Sans", sans-serif !important;
+        }
+      </style>
       
       <div class="reglementen-detail teaser">
         <div class="reglementen-detail__title">
