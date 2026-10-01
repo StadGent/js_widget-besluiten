@@ -1,162 +1,329 @@
-(function () {
-  // Voorkomt een fout als dit script twee keer op dezelfde pagina wordt geladen.
-  if (customElements.get('besluiten-detail')) return;
+class BesluitenLijst extends HTMLElement {
 
-  // Eigen opmaak van de widget, één keer per pagina geladen.
-  // De styleguide en icoonfont komen uit het Stad Gent-thema van de hostpagina.
-  const WIDGET_CSS = 'https://stadgent.github.io/js_widget-besluiten/besluiten-detail/besluiten-detail.css';
-
-  function ensureStyles() {
-    if (document.getElementById('besluiten-widget-css')) return;
-    const link = document.createElement('link');
-    link.id = 'besluiten-widget-css';
-    link.rel = 'stylesheet';
-    link.href = WIDGET_CSS;
-    document.head.appendChild(link);
+  constructor() {
+    super();
+    this.amount = parseInt(this.getAttribute('aantal')) || 10;
+    this.pager = this.getAttribute('pager') !== null;
+    this.offset = 0;
+    this.maxCount = 1000;
   }
 
-  class BesluitenDetail extends HTMLElement {
+  connectedCallback() {
+    this.getBesluiten();
+  }
 
-    constructor() {
-      super();
+  createDetail(besluit) {
+    return `
+      <besluiten-detail
+        titel="${besluit.title.value}"
+        orgaan="${besluit.orgaan.value}"
+        datum="${besluit.zitting_datum.value}"
+        url="${besluit.url.value}"
+        status="${besluit.status?.value || ''}"
+      ></besluiten-detail>
+    `;
+  }
+
+  renderResults(besluiten) {
+    if (!this.shadowRoot) {  // Only attach a shadow root if one does not exist
+      const template = this.getTemplate();
+      this.attachShadow({mode: 'open'}).appendChild(
+          template.cloneNode(true)
+      );
     }
 
-    connectedCallback() {
-      ensureStyles();
+    let list = "";
+    besluiten.forEach(besluit => {
+      list += this.createDetail(besluit);
+    });
 
-      if (this.getAttribute('uri')) {
-        this.getBesluit(this.getAttribute('uri'));
-      } else {
-        this.titel = this.getAttribute('titel');
-        this.orgaan = this.getAttribute('orgaan');
-        this.datum = this.formatDate(this.getAttribute('datum'));
-        this.url = this.getAttribute('url');
-        this.status = this.getAttribute('status');
-        switch(this.status) {
-          case 'Aanvaard tot de zitting als hoogdringend agendapunt':
-          case 'Goedgekeurd':
-          case 'Behandeld':
-            this.status_color = 'true';
-            break;
-          case 'Afgekeurd':
-          case 'Afgevoerd':
-          case 'Geweigerd':
-          case 'Ingetrokken':
-            this.status_color = 'false';
-            break;
-          case 'Gedeeltelijk ingetrokken':
-          case 'Verdaagd':
-            this.status_color = 'void';
-            break;
-          case '':
-            this.status_color = 'void';
-            this.status = 'Onbekend';
-            break;
-        default:
-            this.status_color = 'void';
-            break;
-        }
-        this.innerHTML = this.createDetail();
+    this.shadowRoot.querySelectorAll(".js-resolutions-items")[0].innerHTML = list;
+
+    if (this.pager) {
+      this.shadowRoot.querySelectorAll(".pager")[0].innerHTML = this.getPager();
+
+      this.nextButton = this.shadowRoot.querySelector('#js-pager-next');
+      if (this.nextButton) {
+        // FIX: use onclick instead of addEventListener to avoid stacking listeners
+        this.nextButton.onclick = (event) => {
+          event.preventDefault();
+          this.pageUp();
+        };
+      }
+      this.previousButton = this.shadowRoot.querySelector('#js-pager-previous');
+      if (this.previousButton) {
+        // FIX: use onclick instead of addEventListener to avoid stacking listeners
+        this.previousButton.onclick = (event) => {
+          event.preventDefault();
+          this.pageDown();
+        };
       }
     }
+  }
 
-    createDetail() {
-      // Generieke icoonklassen uit de styleguide, zodat het icoon niet afhangt van
-      // widgetspecifieke regels (.resolutions-detail__status--true:before) in één bepaalde versie.
-      const icons = {
-        'true': 'icon-checkmark-circle',
-        'false': 'icon-cross-circle',
-      };
-      const icon = icons[this.status_color]
-        ? `<i class="${icons[this.status_color]}" aria-hidden="true"></i>`
-        : '';
+  async executeQuery(query) {
+    const endpoint = this.getAttribute('sparql-endpoint') + "?query=" + encodeURIComponent(query);
+    const response = await fetch(endpoint,
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Accept': 'application/sparql-results+json'
+          }
+        });
 
-      return (`
-        <div class="cs--blue teaser">
-          <div class="resolutions-detail">
-            <div class="resolutions-detail__title">
-              <a href="${this.url}" class="resolutions-detail__link no-icon">${this.titel}</a>
-            </div>
-            <dl class="resolutions-detail__list">
-              <dt>Orgaan:</dt>
-              <dd>${this.orgaan}</dd>
-              <dt>Datum van de zitting:</dt>
-              <dd>${this.datum}</dd>
-            </dl>
-            <span class="resolutions-detail__status resolutions-detail__status--${this.status_color}">${icon}${this.status}</span>
-          </div>
-          <a href="${this.url}" class="teaser-overlay-link" tabindex="-1" aria-hidden="true">${this.titel}</a>
-        </div>
-      `);
+    if (response.ok) {
+      const json = await response.json();
+      return json;
+    } else {
+      console.log("Error when getting data.");
+      console.log(query);
+    }
+  }
+
+  async getBesluiten() {
+    let query = this.constructQuery();
+    if (this.pager) {
+      let count = await this.executeQuery(this.countQuery);
+      this.maxCount = count.results.bindings[0]['count'].value;
+      console.log(this.maxCount);
     }
 
-    renderResults(besluit) {
-      this.titel = besluit.title.value;
-      this.orgaan = '@todo';
-      this.datum = this.formatDate(besluit.date.value);
-      this.url = besluit.url.value;
-      this.status = besluit.status.value || '';
-      this.approved = besluit.status.value == 'Goedgekeurd';
-      this.innerHTML = this.createDetail();
+    let json = await this.executeQuery(this.selectQuery);
+    if (json) {
+      this.renderResults(json.results.bindings);
+    }
+  }
+
+  constructQuery() {
+    const statussen = this.getAttribute('statussen');
+    const bestuurseenheden = this.getAttribute('bestuurseenheden');
+    const bestuursorganen = this.getAttribute('bestuursorganen');
+    const taxonomy = this.getAttribute('taxonomy') || 'http://stad.gent/id/concepts/decision_making_themes';
+    const concepts = this.getAttribute('concepts');
+    const wijken = this.getAttribute('wijken');
+    let filterparams = "";
+    if (statussen) {
+      const statussenArray = statussen.split(",");
+      // NOTE: adding query part here, status is not optional when filtering on status
+      filterparams +=  `?besluit prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status. \n`;
+      filterparams += "VALUES ?status { " + statussenArray.map(status => `"${status.trim()}"@nl`).join(" ") + " }";
+    } else {
+      // TODO: adding query part here, status is ONLY optional when not filtering on status
+      filterparams +=  `OPTIONAL { ?besluit prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status }`;
+      filterparams += `BIND(COALESCE(?status, "Onbekend"@nl) AS ?status)`;
+    }
+    if (bestuurseenheden) {
+      const bestuurseenhedenArray = bestuurseenheden.split(" ");
+      filterparams += "VALUES ?bestuureenheidURI { " + bestuurseenhedenArray.map(bestuurseenheid => `<${bestuurseenheid.trim()}>`).join(" ") + " }";
+    }
+    if (bestuursorganen) {
+      const bestuursorganenArray = bestuursorganen.split(" ");
+      filterparams += "VALUES ?bestuursorgaanURI { " + bestuursorganenArray.map(bestuursorgaan => `<${bestuursorgaan.trim()}>`).join(" ") + " }";
     }
 
-    formatDate(date) {
-      date = new Date(date);
-      let d = date.toLocaleDateString('nl-be', {
-        weekday: 'short',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit'
-      });
-      let t = date.toLocaleTimeString('nl-be', {
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric'
-      });
-      return `${d} om ${t}`;
+    // Date filter.
+    const startdate = this.getAttribute('start');
+    const enddate = this.getAttribute('eind');
+    if (startdate && enddate) {
+      filterparams += `FILTER(?zitting_datum >= "${startdate}"^^xsd:date && ?zitting_datum <= "${enddate}"^^xsd:date)`;
+    } else if (startdate) {
+      filterparams += `FILTER(?zitting_datum >= "${startdate}"^^xsd:date)`;
+    } else if (enddate) {
+      filterparams += `FILTER(?zitting_datum <= "${enddate}"^^xsd:date)`;
     }
 
-    async getBesluit(uri) {
-      const query = this.constructQuery(uri);
-      const endpoint = this.getAttribute('sparql-endpoint') + "?query=" + encodeURIComponent(query);
-      const response = await fetch(endpoint,
-          {
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-              'Accept': 'application/sparql-results+json'
-            }
-          });
+    let queryBestuursorgaan = `
+        prov:wasGeneratedBy/dct:subject ?agendapunt .
 
-      if (response.ok) {
-        const json = await response.json();
-        if (json.results.bindings && json.results.bindings.length > 0) {
-          //console.log(JSON.stringify(json.results.bindings));
-          this.renderResults(json.results.bindings[0]);
-        } else {
-          console.log("Error when getting data.");
-        }
-      } else {
-        console.log("Error when getting data.");
-      }
+      ?zitting besluit:behandelt ?agendapunt ;
+        besluit:geplandeStart ?zitting_datum ;
+        besluit:isGehoudenDoor/mandaat:isTijdspecialisatieVan ?bestuursorgaanURI .`;
+    let queryBestuurseenheid = `?bestuursorgaanURI besluit:bestuurt ?bestuureenheidURI.`;
+    let queryThema = '';
+    if (concepts) {
+      const conceptsArray = concepts.split(" ");
+      queryThema = `
+        ?besluit ext:hasAnnotation ?annotation .
+        ?annotation ext:withTaxonomy ?thema ;
+                             ext:creationDate ?date ;
+                             ext:hasLabel ?label .
+        ?label ext:isTaxonomy ?concept .
+        VALUES ?thema { <${taxonomy}> }
+        VALUES ?concept { ` + conceptsArray.map(concept => `<${concept.trim()}>`).join(" ") + ` }
+        FILTER (REGEX(STR(?url), "/agendapunten/[0-9]"))
+        FILTER (!CONTAINS(STR(?orgaan), "personeel"))
+        FILTER (!CONTAINS(STR(?orgaan), "gemeenteraad"))
+      `;
     }
 
-    constructQuery(uri) {
-      return `
+    let queryWijken = '';
+    if (wijken) {
+      const wijkenArray = wijken.split(" ");
+      queryWijken = `
+        ?besluit gold:translation/eli:realizes ?work .
+        ?wijkAnnotation oa:hasTarget ?work ;
+          oa:hasBody ?wijk .
+        VALUES ?wijk { ` + wijkenArray.map(wijk => `<${wijk.trim()}>`).join(" ") + ` }
+      `;
+    }
+
+    // @TODO: remove OPTIONAL {} when eenheden are available.
+    let queryOptional = `OPTIONAL {${queryBestuurseenheid}}`;
+
+
+    // @TODO: remove with query below after Bestuursorgaan has been moved to Zitting iso BehandelingVanAgendapunt
+    const endpoint = this.getAttribute('sparql-endpoint');
+    if (endpoint.includes("probe")) {
+      queryBestuursorgaan = `
+        prov:wasGeneratedBy ?behandelingVanAgendapunt .
+        ?behandelingVanAgendapunt dct:subject ?agendapunt .
+        ?agendapunt ^besluit:behandelt ?zitting .
+        ?zitting besluit:isGehoudenDoor ?bestuursorgaanURI ;
+          besluit:geplandeStart ?zitting_datum.
+      `;
+    }
+
+    let orderbyClause = 'ORDER BY DESC(?zitting_datum)';
+    let limitClause = `LIMIT ${this.amount}`;
+    let offsetClause = `OFFSET ${this.offset}`;
+
+    this.selectQuery = this.getQuery(
+        'DISTINCT ?besluit ?title ?agendapunt ?zitting_datum ?orgaan ?url ?status',
+        queryBestuursorgaan,
+        queryThema,
+        queryWijken,
+        filterparams,
+        queryOptional,
+        orderbyClause,
+        limitClause,
+        offsetClause
+    );
+
+    this.countQuery = this.getQuery('(COUNT(DISTINCT(?besluit)) AS ?count)',
+        queryBestuursorgaan,
+        queryThema,
+        queryWijken,
+        filterparams,
+        queryOptional
+    );
+
+    return this.selectQuery;
+  }
+
+  getQuery(fields, queryBestuursorgaan, queryThema, queryWijken, filterparams, optionalQuery, orderbyClause='', limitClause='', offsetClause='') {
+    return `
       PREFIX dct: <http://purl.org/dc/terms/>
       PREFIX prov: <http://www.w3.org/ns/prov#>
       PREFIX eli: <http://data.europa.eu/eli/ontology#>
       PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
+      PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+      PREFIX mandaat: <http://data.vlaanderen.be/ns/mandaat#>
+      PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
+      PREFIX oa: <http://www.w3.org/ns/oa#>
+      PREFIX gold: <http://purl.org/linguistics/gold/>
 
-      SELECT ?title ?date ?url ?status WHERE {
-        <${uri}> a besluit:Besluit ;
-          eli:date_publication ?date ;
+      SELECT
+        ${fields}
+      WHERE {
+        ?besluit a besluit:Besluit ;
           eli:title_short ?title ;
-          prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status ;
-          prov:wasDerivedFrom ?url .
-      } LIMIT 1`
-    }
+          prov:wasDerivedFrom ?url ;
+        ${queryBestuursorgaan}
 
+        ?bestuursorgaanURI skos:prefLabel ?orgaanLabel .
+        ${queryThema}
+        ${queryWijken}
+        ${optionalQuery}
+        ${filterparams}
+        BIND(CONCAT(UCASE(SUBSTR(?orgaanLabel, 1, 1)), SUBSTR(?orgaanLabel, 2)) AS ?orgaan)
+      }
+      ${orderbyClause}
+      ${limitClause}
+      ${offsetClause}
+    `;
   }
 
-  customElements.define('besluiten-detail', BesluitenDetail);
-})();
+  getTemplate() {
+    const template = `
+      <template id="template-besluiten-lijst">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Sans:400,600,700">
+        <link rel="stylesheet" href="https://stijlgids.stad.gent/v6/css/styleguide.css">
+        <link rel="stylesheet" href="https://stijlgids.stad.gent/v6/css/main.css">
+        <link rel="stylesheet" href="https://stadgent.github.io/js_widget-besluiten/besluiten-lijst/besluiten-lijst.css">
+
+        <div class="resolutions-list cs--blue">
+          <section class="highlight">
+            <div class="highlight__inner">
+              <slot name="title" class="h3">Recente besluiten</slot>
+
+              <div class="resolutions-list__items js-resolutions-items"></div>
+
+              <div class="pager"></div>
+
+              <slot name="raadpleegomgeving"><a href="https://ebesluitvorming.gent.be/" class="button button-primary">Alle besluiten van Stad Gent</a></slot>
+            </div>
+          </section>
+        </div>
+      </template>
+    `;
+
+    if (!document.getElementById("template-besluiten-lijst")) {
+      // FIX: use appendChild instead of innerHTML += to avoid destroying existing DOM/shadow roots
+      const div = document.createElement("div");
+      div.innerHTML = template;
+      document.body.appendChild(div.firstElementChild);
+    }
+
+    return document.getElementById("template-besluiten-lijst").content;
+  }
+
+  pageUp() {
+    this.offset += this.amount;
+    console.log(this.offset);
+    this.getBesluiten();
+  }
+
+  pageDown() {
+    if (this.offset >= this.amount) {
+      this.offset -= this.amount;
+      console.log(this.offset);
+      this.getBesluiten();
+    }
+  }
+
+  getPager() {
+    let previous = '';
+    let next = '';
+    let currentPage = Math.floor(this.offset / this.amount) + 1;
+    let totalPages = Math.ceil(this.maxCount / this.amount);
+
+    if (this.offset >= this.amount) {
+      previous = `
+        <li class="previous" id="js-pager-previous"><a href="#" class="standalone-link back">
+            Vorige
+            <span class="visually-hidden">pagina</span></a></li>
+      `;
+    }
+
+    if (this.offset < this.maxCount - this.amount) {
+      next = `
+        <li class="next" id="js-pager-next"><a href="#" class="standalone-link">
+            Volgende
+            <span class="visually-hidden">pagina</span></a></li>
+      `;
+    }
+
+    return `
+    <nav class="pager" aria-labelledby="pagination">
+      <h2 id="pagination" class="visually-hidden">Paginatie</h2>
+      <ul class="pager__items">
+        ${previous}
+        <li class="current-page">Pagina ${currentPage} van ${totalPages}</li>
+        ${next}
+      </ul>
+    </nav>
+    `;
+  }
+}
+
+customElements.define('besluiten-lijst', BesluitenLijst);
