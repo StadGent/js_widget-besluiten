@@ -1,157 +1,162 @@
-// Eigen opmaak van de widget, één keer per pagina geladen.
-// De styleguide en icoonfont komen uit het Stad Gent-thema van de hostpagina.
-const WIDGET_CSS = 'https://stadgent.github.io/js_widget-besluiten/besluiten-detail/besluiten-detail.css';
+(function () {
+  // Voorkomt een fout als dit script twee keer op dezelfde pagina wordt geladen.
+  if (customElements.get('besluiten-detail')) return;
 
-function ensureStyles() {
-  if (document.getElementById('besluiten-widget-css')) return;
-  const link = document.createElement('link');
-  link.id = 'besluiten-widget-css';
-  link.rel = 'stylesheet';
-  link.href = WIDGET_CSS;
-  document.head.appendChild(link);
-}
+  // Eigen opmaak van de widget, één keer per pagina geladen.
+  // De styleguide en icoonfont komen uit het Stad Gent-thema van de hostpagina.
+  const WIDGET_CSS = 'https://stadgent.github.io/js_widget-besluiten/besluiten-detail/besluiten-detail.css';
 
-class BesluitenDetail extends HTMLElement {
-
-  constructor() {
-    super();
+  function ensureStyles() {
+    if (document.getElementById('besluiten-widget-css')) return;
+    const link = document.createElement('link');
+    link.id = 'besluiten-widget-css';
+    link.rel = 'stylesheet';
+    link.href = WIDGET_CSS;
+    document.head.appendChild(link);
   }
 
-  connectedCallback() {
-    ensureStyles();
+  class BesluitenDetail extends HTMLElement {
 
-    if (this.getAttribute('uri')) {
-      this.getBesluit(this.getAttribute('uri'));
-    } else {
-      this.titel = this.getAttribute('titel');
-      this.orgaan = this.getAttribute('orgaan');
-      this.datum = this.formatDate(this.getAttribute('datum'));
-      this.url = this.getAttribute('url');
-      this.status = this.getAttribute('status');
-      switch(this.status) {
-        case 'Aanvaard tot de zitting als hoogdringend agendapunt':
-        case 'Goedgekeurd':
-        case 'Behandeld':
-          this.status_color = 'true';
-          break;
-        case 'Afgekeurd':
-        case 'Afgevoerd':
-        case 'Geweigerd':
-        case 'Ingetrokken':
-          this.status_color = 'false';
-          break;
-        case 'Gedeeltelijk ingetrokken':
-        case 'Verdaagd':
-          this.status_color = 'void';
-          break;
-        case '':
-          this.status_color = 'void';
-          this.status = 'Onbekend';
-          break;
-      default:
-          this.status_color = 'void';
-          break;
+    constructor() {
+      super();
+    }
+
+    connectedCallback() {
+      ensureStyles();
+
+      if (this.getAttribute('uri')) {
+        this.getBesluit(this.getAttribute('uri'));
+      } else {
+        this.titel = this.getAttribute('titel');
+        this.orgaan = this.getAttribute('orgaan');
+        this.datum = this.formatDate(this.getAttribute('datum'));
+        this.url = this.getAttribute('url');
+        this.status = this.getAttribute('status');
+        switch(this.status) {
+          case 'Aanvaard tot de zitting als hoogdringend agendapunt':
+          case 'Goedgekeurd':
+          case 'Behandeld':
+            this.status_color = 'true';
+            break;
+          case 'Afgekeurd':
+          case 'Afgevoerd':
+          case 'Geweigerd':
+          case 'Ingetrokken':
+            this.status_color = 'false';
+            break;
+          case 'Gedeeltelijk ingetrokken':
+          case 'Verdaagd':
+            this.status_color = 'void';
+            break;
+          case '':
+            this.status_color = 'void';
+            this.status = 'Onbekend';
+            break;
+        default:
+            this.status_color = 'void';
+            break;
+        }
+        this.innerHTML = this.createDetail();
       }
+    }
+
+    createDetail() {
+      // Generieke icoonklassen uit de styleguide, zodat het icoon niet afhangt van
+      // widgetspecifieke regels (.resolutions-detail__status--true:before) in één bepaalde versie.
+      const icons = {
+        'true': 'icon-checkmark-circle',
+        'false': 'icon-cross-circle',
+      };
+      const icon = icons[this.status_color]
+        ? `<i class="${icons[this.status_color]}" aria-hidden="true"></i>`
+        : '';
+
+      return (`
+        <div class="cs--blue teaser">
+          <div class="resolutions-detail">
+            <div class="resolutions-detail__title">
+              <a href="${this.url}" class="resolutions-detail__link no-icon">${this.titel}</a>
+            </div>
+            <dl class="resolutions-detail__list">
+              <dt>Orgaan:</dt>
+              <dd>${this.orgaan}</dd>
+              <dt>Datum van de zitting:</dt>
+              <dd>${this.datum}</dd>
+            </dl>
+            <span class="resolutions-detail__status resolutions-detail__status--${this.status_color}">${icon}${this.status}</span>
+          </div>
+          <a href="${this.url}" class="teaser-overlay-link" tabindex="-1" aria-hidden="true">${this.titel}</a>
+        </div>
+      `);
+    }
+
+    renderResults(besluit) {
+      this.titel = besluit.title.value;
+      this.orgaan = '@todo';
+      this.datum = this.formatDate(besluit.date.value);
+      this.url = besluit.url.value;
+      this.status = besluit.status.value || '';
+      this.approved = besluit.status.value == 'Goedgekeurd';
       this.innerHTML = this.createDetail();
     }
-  }
 
-  createDetail() {
-    // Generieke icoonklassen uit de styleguide, zodat het icoon niet afhangt van
-    // widgetspecifieke regels (.resolutions-detail__status--true:before) in één bepaalde versie.
-    const icons = {
-      'true': 'icon-checkmark-circle',
-      'false': 'icon-cross-circle',
-    };
-    const icon = icons[this.status_color]
-      ? `<i class="${icons[this.status_color]}" aria-hidden="true"></i>`
-      : '';
+    formatDate(date) {
+      date = new Date(date);
+      let d = date.toLocaleDateString('nl-be', {
+        weekday: 'short',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      });
+      let t = date.toLocaleTimeString('nl-be', {
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric'
+      });
+      return `${d} om ${t}`;
+    }
 
-    return (`
-      <div class="cs--blue teaser">
-        <div class="resolutions-detail">
-          <div class="resolutions-detail__title">
-            <a href="${this.url}" class="resolutions-detail__link no-icon">${this.titel}</a>
-          </div>
-          <dl class="resolutions-detail__list">
-            <dt>Orgaan:</dt>
-            <dd>${this.orgaan}</dd>
-            <dt>Datum van de zitting:</dt>
-            <dd>${this.datum}</dd>
-          </dl>
-          <span class="resolutions-detail__status resolutions-detail__status--${this.status_color}">${icon}${this.status}</span>
-        </div>
-        <a href="${this.url}" class="teaser-overlay-link" tabindex="-1" aria-hidden="true">${this.titel}</a>
-      </div>
-    `);
-  }
+    async getBesluit(uri) {
+      const query = this.constructQuery(uri);
+      const endpoint = this.getAttribute('sparql-endpoint') + "?query=" + encodeURIComponent(query);
+      const response = await fetch(endpoint,
+          {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              'Accept': 'application/sparql-results+json'
+            }
+          });
 
-  renderResults(besluit) {
-    this.titel = besluit.title.value;
-    this.orgaan = '@todo';
-    this.datum = this.formatDate(besluit.date.value);
-    this.url = besluit.url.value;
-    this.status = besluit.status.value || '';
-    this.approved = besluit.status.value == 'Goedgekeurd';
-    this.innerHTML = this.createDetail();
-  }
-
-  formatDate(date) {
-    date = new Date(date);
-    let d = date.toLocaleDateString('nl-be', {
-      weekday: 'short',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    });
-    let t = date.toLocaleTimeString('nl-be', {
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric'
-    });
-    return `${d} om ${t}`;
-  }
-
-  async getBesluit(uri) {
-    const query = this.constructQuery(uri);
-    const endpoint = this.getAttribute('sparql-endpoint') + "?query=" + encodeURIComponent(query);
-    const response = await fetch(endpoint,
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Accept': 'application/sparql-results+json'
-          }
-        });
-
-    if (response.ok) {
-      const json = await response.json();
-      if (json.results.bindings && json.results.bindings.length > 0) {
-        //console.log(JSON.stringify(json.results.bindings));
-        this.renderResults(json.results.bindings[0]);
+      if (response.ok) {
+        const json = await response.json();
+        if (json.results.bindings && json.results.bindings.length > 0) {
+          //console.log(JSON.stringify(json.results.bindings));
+          this.renderResults(json.results.bindings[0]);
+        } else {
+          console.log("Error when getting data.");
+        }
       } else {
         console.log("Error when getting data.");
       }
-    } else {
-      console.log("Error when getting data.");
     }
+
+    constructQuery(uri) {
+      return `
+      PREFIX dct: <http://purl.org/dc/terms/>
+      PREFIX prov: <http://www.w3.org/ns/prov#>
+      PREFIX eli: <http://data.europa.eu/eli/ontology#>
+      PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
+
+      SELECT ?title ?date ?url ?status WHERE {
+        <${uri}> a besluit:Besluit ;
+          eli:date_publication ?date ;
+          eli:title_short ?title ;
+          prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status ;
+          prov:wasDerivedFrom ?url .
+      } LIMIT 1`
+    }
+
   }
 
-  constructQuery(uri) {
-    return `
-    PREFIX dct: <http://purl.org/dc/terms/>
-    PREFIX prov: <http://www.w3.org/ns/prov#>
-    PREFIX eli: <http://data.europa.eu/eli/ontology#>
-    PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
-
-    SELECT ?title ?date ?url ?status WHERE {
-      <${uri}> a besluit:Besluit ;
-        eli:date_publication ?date ;
-        eli:title_short ?title ;
-        prov:wasGeneratedBy/besluit:heeftStemming/besluit:gevolg ?status ;
-        prov:wasDerivedFrom ?url .
-    } LIMIT 1`
-  }
-
-}
-
-customElements.define('besluiten-detail', BesluitenDetail);
+  customElements.define('besluiten-detail', BesluitenDetail);
+})();
